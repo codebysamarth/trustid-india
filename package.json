@@ -1,0 +1,29 @@
+{
+  "name": "trustid-india",
+  "version": "1.0.0",
+  "description": "TrustID India — Blockchain-Assisted Self-Sovereign Identity and Verifiable Credential Verification Platform",
+  "private": true,
+  "scripts": {
+    "test:contracts": "cd contracts && npm test",
+    "test:backend": "cd backend && npm test",
+    "test": "npm run test:contracts && npm run test:backend",
+    "node": "cd contracts && npx hardhat node",
+    "deploy:contracts": "cd contracts && npx hardhat run scripts/deploy.ts --network localhost",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:frontend": "cd frontend && npm run dev",
+    "build:frontend": "cd frontend && npm run build"
+  },
+  "keywords": [
+    "self-sovereign-identity",
+    "ssi",
+    "verifiable-credentials",
+    "w3c",
+    "did",
+    "solidity",
+    "blockchain",
+    "ethereum",
+    "trust-registry"
+  ],
+  "author": "TrustID India University Project",
+  "license": "MIT"
+}

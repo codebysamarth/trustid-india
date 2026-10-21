@@ -1,0 +1,32 @@
+{
+  "name": "trustid-india-backend",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "test": "mocha -r tsx/cjs src/test/**/*.test.ts --timeout 15000"
+  },
+  "dependencies": {
+    "canonicalize": "^2.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.13.0",
+    "express": "^4.19.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.3.16",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.12.12",
+    "@types/uuid": "^9.0.8",
+    "chai": "^4.3.7",
+    "mocha": "^10.4.0",
+    "tsx": "^4.11.0",
+    "typescript": "^5.4.5"
+  }
+}
