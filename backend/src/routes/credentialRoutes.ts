@@ -6,7 +6,7 @@ import {
   CredentialSubject,
   CredentialIssuer,
   CredentialStatusReference,
-} from '../../../shared/types/credential';
+} from '../types/credential';
 import {
   signCredential,
   computeCredentialStatusId,

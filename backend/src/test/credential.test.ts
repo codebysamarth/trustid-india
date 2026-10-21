@@ -6,7 +6,7 @@ import {
   computeCredentialStatusId,
 } from '../services/crypto';
 import { verifyVerifiableCredential } from '../services/verificationEngine';
-import { TrustIdVerifiableCredential } from '../../../shared/types/credential';
+import { TrustIdVerifiableCredential } from '../types/credential';
 
 describe('TrustID India - Credential Cryptography & Verification Engine Tests', function () {
   const testIssuerWallet = ethers.Wallet.createRandom();

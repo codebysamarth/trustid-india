@@ -1,4 +1,4 @@
-import { TrustIdVerifiableCredential } from '../../../shared/types/credential';
+import { TrustIdVerifiableCredential } from '../types/credential';
 import { signCredential, computeCredentialStatusId } from './crypto';
 import { CONFIG } from '../config';
 import fs from 'fs';

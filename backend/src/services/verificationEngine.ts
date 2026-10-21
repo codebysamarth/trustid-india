@@ -3,7 +3,7 @@ import {
   VerificationReport,
   OverallVerificationOutcome,
   VerificationCheckDetail,
-} from '../../../shared/types/credential';
+} from '../types/credential';
 import {
   verifyCredentialSignature,
   extractAddressFromDid,

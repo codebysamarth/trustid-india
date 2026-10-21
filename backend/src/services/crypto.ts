@@ -1,6 +1,6 @@
 import canonicalize from 'canonicalize';
 import { ethers } from 'ethers';
-import { TrustIdVerifiableCredential } from '../../../shared/types/credential';
+import { TrustIdVerifiableCredential } from '../types/credential';
 
 /**
  * Normalizes an Ethereum address to checksum format.

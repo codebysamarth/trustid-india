@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { CONFIG, getContractsConfig } from '../config';
-import { BlockchainEventLog } from '../../../shared/types/credential';
+import { BlockchainEventLog } from '../types/credential';
 import { normalizeAddress } from './crypto';
 
 let providerInstance: ethers.JsonRpcProvider | null = null;

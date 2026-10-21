@@ -4,7 +4,7 @@
   "private": true,
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node -e \"const fs=require('fs'); if(fs.existsSync('src/config/contracts.json')) { fs.mkdirSync('dist/config', {recursive:true}); fs.copyFileSync('src/config/contracts.json', 'dist/config/contracts.json'); }\"",
     "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
     "test": "mocha -r tsx/cjs src/test/**/*.test.ts --timeout 15000"
