@@ -74,6 +74,20 @@ class CredentialStore {
       existing.isRevoked = isRevoked;
       if (reason) existing.revocationReason = reason;
       this.saveToDisk();
+      return;
+    }
+    // Search across all items by statusId or credential ID
+    for (const [_, item] of this.credentials) {
+      if (
+        item.statusId?.toLowerCase() === id.toLowerCase() ||
+        item.credential?.id?.toLowerCase() === id.toLowerCase() ||
+        item.credential?.credentialStatus?.id?.toLowerCase() === id.toLowerCase()
+      ) {
+        item.isRevoked = isRevoked;
+        if (reason) item.revocationReason = reason;
+        this.saveToDisk();
+        return;
+      }
     }
   }
 

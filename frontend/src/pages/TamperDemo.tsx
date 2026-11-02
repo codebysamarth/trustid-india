@@ -9,7 +9,6 @@ import {
   Hash,
   Binary,
   ArrowRight,
-  Sparkles,
   Info,
   KeyRound,
   FileCode,
@@ -18,7 +17,6 @@ import { fetchSampleCredential, verifyCredentialApi } from '../services/api';
 import {
   canonicalizeCredential,
   computeCredentialDigest,
-  verifySignatureClientSide,
 } from '../services/clientCrypto';
 import { TrustIdVerifiableCredential, VerificationReport } from '../types';
 import { StatusBadge } from '../components/common/StatusBadge';
@@ -31,7 +29,7 @@ export const TamperDemo: React.FC = () => {
   const [programmeField, setProgrammeField] = useState('Computer Science & Engineering');
   const [degreeField, setDegreeField] = useState('Bachelor of Technology');
   const [cgpaField, setCgpaField] = useState('9.24');
-  const [nameField, setNameField] = useState('Aarav Sharma — DEMO');
+  const [nameField, setNameField] = useState('Aarav Sharma');
 
   const [originalDigest, setOriginalDigest] = useState('');
   const [currentDigest, setCurrentDigest] = useState('');
@@ -63,11 +61,10 @@ export const TamperDemo: React.FC = () => {
         setCurrentDigest(origHash);
         setIsTampered(false);
 
-        // Run initial verification
         verifyPayload(res.sample);
       }
     } catch (err) {
-      console.error('Failed to load sample credential:', err);
+      console.error('Failed to load credential:', err);
     }
   };
 
@@ -109,7 +106,6 @@ export const TamperDemo: React.FC = () => {
 
     setTamperedVc(updated);
 
-    // Compute new canonical digest
     const newCanonical = canonicalizeCredential(updated);
     const newHash = computeCredentialDigest(newCanonical);
     setCurrentDigest(newHash);
@@ -117,7 +113,6 @@ export const TamperDemo: React.FC = () => {
     const hasChanged = newHash !== originalDigest;
     setIsTampered(hasChanged);
 
-    // Automatically trigger real cryptographic verification
     verifyPayload(updated);
   };
 
@@ -134,91 +129,91 @@ export const TamperDemo: React.FC = () => {
   };
 
   const handleQuickTamper = () => {
-    handleApplyTamper('programme', 'Artificial Intelligence & Robotics');
+    handleApplyTamper('cgpa', '9.98');
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-rose-950/80 border border-rose-500/30 text-rose-400 rounded-lg">
+            <span className="p-1.5 bg-amber-50 text-amber-700 rounded-lg">
               <Flame className="w-5 h-5" />
-            </div>
-            <span className="text-xs uppercase tracking-wider font-semibold text-rose-400">
-              Interactive Cryptographic Proof Demonstration
+            </span>
+            <span className="text-xs uppercase tracking-wider font-bold text-amber-800">
+              Interactive Security Sandbox
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
-            Cryptographic Credential Tampering Demonstration
+          <h1 className="text-2xl font-extrabold text-slate-900 mt-1">
+            Anti-Tampering Cryptographic Demonstration
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Observe in real-time how altering a single character causes mathematical verification to fail immediately.
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Test how altering any claim (e.g., student name or CGPA) invalidates the ECDSA signature instantly.
           </p>
         </div>
 
         <div className="flex items-center gap-2">
           <button
             onClick={handleQuickTamper}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-semibold shadow-lg shadow-rose-950 transition"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold shadow-sm transition active:scale-95"
           >
             <Flame className="w-4 h-4" />
-            Demonstrate Credential Tampering
+            Simulate CGPA Tamper (9.98)
           </button>
           <button
             onClick={handleRestoreOriginal}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition"
           >
-            <RotateCcw className="w-4 h-4 text-cyan-400" />
-            Restore Original Credential
+            <RotateCcw className="w-4 h-4 text-emerald-600" />
+            Restore Original
           </button>
         </div>
       </div>
 
-      {/* Real-Time Hash Comparison Visualizer */}
-      <div className="bg-[#131F42]/70 border border-slate-800 rounded-2xl p-6 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+      {/* Real-Time Hash Comparison Box */}
+      <div className="bg-white border border-emerald-100 rounded-2xl p-6 space-y-4 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div className="flex items-center gap-2">
-            <Hash className="w-4 h-4 text-cyan-400" />
-            <h3 className="text-sm font-bold text-white">
+            <Hash className="w-4 h-4 text-emerald-600" />
+            <h3 className="text-sm font-bold text-slate-900">
               SHA-256 Canonical JSON Digest Comparison
             </h3>
           </div>
           <span
-            className={`text-xs font-mono font-bold px-2 py-0.5 rounded border ${
+            className={`text-xs font-mono font-bold px-3 py-1 rounded-full border ${
               isTampered
-                ? 'bg-rose-950 text-rose-400 border-rose-500/40'
-                : 'bg-emerald-950 text-emerald-400 border-emerald-500/40'
+                ? 'bg-rose-50 text-rose-800 border-rose-300'
+                : 'bg-emerald-50 text-emerald-800 border-emerald-300'
             }`}
           >
-            {isTampered ? 'HASH MISMATCH (TAMPERED)' : 'HASH IDENTICAL (UNTOUCHED)'}
+            {isTampered ? '⚠️ DIGEST MISMATCH (TAMPERED)' : '✓ DIGEST IDENTICAL (GENUINE)'}
           </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-mono">
-          <div className="bg-[#0A1024] p-3.5 rounded-xl border border-slate-800 space-y-1">
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-sans">
-              1. Original Issued Digest (Signed by Issuer):
+          <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-1">
+            <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-sans font-bold">
+              1. Original Issued Digest (Signed by University):
             </span>
-            <div className="text-emerald-400 break-all text-[11px]">
-              {originalDigest || 'Loading original digest...'}
+            <div className="text-emerald-700 font-bold break-all text-[11px]">
+              {originalDigest || 'Loading...'}
             </div>
           </div>
 
           <div
             className={`p-3.5 rounded-xl border space-y-1 ${
               isTampered
-                ? 'bg-rose-950/40 border-rose-500/40'
-                : 'bg-[#0A1024] border-slate-800'
+                ? 'bg-rose-50 border-rose-300'
+                : 'bg-slate-50 border-slate-200'
             }`}
           >
-            <span className="text-[10px] text-slate-400 uppercase tracking-wider block font-sans">
-              2. Current Computed Digest (From Current Payload):
+            <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-sans font-bold">
+              2. Computed Digest from Current Data:
             </span>
             <div
-              className={`break-all text-[11px] ${
-                isTampered ? 'text-rose-400 font-bold' : 'text-emerald-400'
+              className={`break-all text-[11px] font-bold ${
+                isTampered ? 'text-rose-700' : 'text-emerald-700'
               }`}
             >
               {currentDigest}
@@ -227,192 +222,125 @@ export const TamperDemo: React.FC = () => {
         </div>
 
         {isTampered && (
-          <div className="p-3 bg-rose-950/30 border border-rose-500/30 rounded-xl text-xs text-rose-300 flex items-start gap-2.5">
-            <Info className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
+          <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 flex items-start gap-2.5">
+            <Info className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
             <p className="leading-relaxed">
-              <strong>Why Signature Validation Failed:</strong> The digital signature (<code className="font-mono text-cyan-300">proofValue</code>) was mathematically computed using the issuer's private key over the <span className="underline">original digest</span>. Modifying any claim produces a completely different SHA-256 digest. When the verifier performs ECDSA public key recovery, the derived signer address will no longer match the authorized university!
+              <strong>Why Verification Failed:</strong> The university's digital signature in MetaMask was computed over the <em>original digest</em>. Modifying any character produces a completely different SHA-256 hash. When the verifier recovers the public key address, it does not match the issuer!
             </p>
           </div>
         )}
       </div>
 
-      {/* Interactive Claim Modification Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Left: Tampering Controls */}
-        <div className="lg:col-span-5 bg-[#131F42]/50 border border-slate-800 rounded-2xl p-6 space-y-5">
-          <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <Binary className="w-4 h-4 text-cyan-400" />
+      {/* Interactive Modification Columns */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left: Interactive Field Inputs */}
+        <div className="lg:col-span-5 bg-white border border-emerald-100 rounded-2xl p-6 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <Binary className="w-4 h-4 text-emerald-600" />
               Live Claims Editor
             </h3>
-            <span className="text-[11px] text-slate-400">
-              Edit claims to test tamper resistance
+            <span className="text-[11px] text-slate-500">
+              Edit values to test tamper detection
             </span>
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-3">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
-                Programme / Major
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Student Name
               </label>
               <input
                 type="text"
-                value={programmeField}
-                onChange={(e) => handleApplyTamper('programme', e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"
+                value={nameField}
+                onChange={(e) => handleApplyTamper('name', e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
               />
-              <span className="text-[10px] text-slate-400 block mt-1">
-                Original: <strong className="text-slate-300">Computer Science & Engineering</strong>
-              </span>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1">
-                Degree Programme
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Degree Conferred
               </label>
               <input
                 type="text"
                 value={degreeField}
                 onChange={(e) => handleApplyTamper('degree', e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
               />
-              <span className="text-[10px] text-slate-400 block mt-1">
-                Original: <strong className="text-slate-300">Bachelor of Technology</strong>
-              </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Cumulative GPA
-                </label>
-                <input
-                  type="text"
-                  value={cgpaField}
-                  onChange={(e) => handleApplyTamper('cgpa', e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-cyan-500 font-mono"
-                />
-                <span className="text-[10px] text-slate-400 block mt-1">
-                  Original: <strong className="text-slate-300">9.24</strong>
-                </span>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1">
-                  Student Name
-                </label>
-                <input
-                  type="text"
-                  value={nameField}
-                  onChange={(e) => handleApplyTamper('name', e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-cyan-500"
-                />
-              </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Major / Department
+              </label>
+              <input
+                type="text"
+                value={programmeField}
+                onChange={(e) => handleApplyTamper('programme', e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500"
+              />
             </div>
 
-            <div className="pt-2 flex items-center justify-between gap-2">
-              <button
-                onClick={handleRestoreOriginal}
-                className="w-full py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold border border-slate-700 transition flex items-center justify-center gap-1.5"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                Reset to Original State
-              </button>
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1">
+                Cumulative CGPA
+              </label>
+              <input
+                type="text"
+                value={cgpaField}
+                onChange={(e) => handleApplyTamper('cgpa', e.target.value)}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-emerald-500 font-mono"
+              />
             </div>
           </div>
         </div>
 
-        {/* Right: Live Verification Feedback */}
-        <div className="lg:col-span-7 space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-white flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-cyan-400" />
-              Live Cryptographic Verification Result
+        {/* Right: Live Cryptographic Result */}
+        <div className="lg:col-span-7 bg-white border border-emerald-100 rounded-2xl p-6 space-y-4 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-emerald-600" />
+              Live Cryptographic Verification Status
             </h3>
-            {isVerifying && (
-              <span className="text-xs text-cyan-400 font-mono animate-pulse">
-                Verifying...
-              </span>
-            )}
+            <span className="text-xs text-slate-500">Auto-evaluates on edit</span>
           </div>
 
-          {verificationReport ? (
-            <div className="bg-[#131F42]/80 border border-slate-700 rounded-2xl p-6 space-y-5">
-              <div
-                className={`p-4 rounded-xl border flex items-start gap-3 ${
-                  verificationReport.isValid
-                    ? 'bg-emerald-950/40 border-emerald-500/40 text-emerald-200'
-                    : 'bg-rose-950/40 border-rose-500/40 text-rose-200'
-                }`}
-              >
-                {verificationReport.isValid ? (
-                  <CheckCircle className="w-6 h-6 text-emerald-400 shrink-0 mt-0.5" />
-                ) : (
-                  <XCircle className="w-6 h-6 text-rose-400 shrink-0 mt-0.5" />
-                )}
-                <div className="space-y-0.5">
-                  <div className="text-xs font-mono uppercase tracking-wider text-slate-400">
-                    Result:
-                  </div>
-                  <h4 className="text-lg font-extrabold text-white">
-                    {verificationReport.overallOutcome}
-                  </h4>
-                  <p className="text-xs text-slate-300 leading-relaxed mt-1">
-                    {verificationReport.summaryMessage}
-                  </p>
-                </div>
+          <div
+            className={`p-4 rounded-xl border flex items-center justify-between ${
+              verificationReport?.isValid
+                ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+                : 'bg-rose-50 border-rose-300 text-rose-900'
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              {verificationReport?.isValid ? (
+                <CheckCircle className="w-6 h-6 text-emerald-600" />
+              ) : (
+                <XCircle className="w-6 h-6 text-rose-600" />
+              )}
+              <div>
+                <span className="font-bold block text-sm">
+                  {verificationReport?.isValid ? 'CRYPTOGRAPHIC SIGNATURE VALID' : 'CRYPTOGRAPHIC SIGNATURE INVALID'}
+                </span>
+                <span className="text-xs opacity-90">
+                  {verificationReport?.isValid
+                    ? 'All claims match the issuer digital signature bit-for-bit.'
+                    : 'The modified payload does not match the issuer signature hash.'}
+                </span>
               </div>
+            </div>
+          </div>
 
-              {/* Check 2 (Signature) Detail */}
-              <div className="bg-[#0D1630] border border-slate-800 rounded-xl p-4 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-white">
-                    Check 2: Cryptographic Signature Status
-                  </span>
-                  <StatusBadge status={verificationReport.checks.signature.status} size="sm" />
-                </div>
-                <p
-                  className={`text-xs ${
-                    verificationReport.checks.signature.status === 'PASSED'
-                      ? 'text-emerald-300'
-                      : 'text-rose-300 font-semibold'
-                  }`}
-                >
+          {verificationReport && (
+            <div className="space-y-2 text-xs">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                <span className="font-bold text-slate-700 block">ECDSA Recovery Diagnostic:</span>
+                <p className="text-slate-600">
                   {verificationReport.checks.signature.message}
-                </p>
-
-                {verificationReport.checks.signature.details && (
-                  <div className="p-2.5 rounded bg-slate-950 text-[11px] font-mono text-cyan-200 space-y-1">
-                    <div>
-                      <span className="text-slate-500">Expected University DID Address: </span>
-                      <span className="text-white">
-                        {String(verificationReport.checks.signature.details.expectedIssuer)}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-slate-500">ECDSA Recovered Signer Address: </span>
-                      <span
-                        className={
-                          verificationReport.isValid ? 'text-emerald-400' : 'text-rose-400'
-                        }
-                      >
-                        {String(verificationReport.checks.signature.details.recoveredSigner || 'None')}
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Educational Note */}
-              <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-xs text-slate-400 space-y-1">
-                <strong className="text-slate-200">What this proves:</strong>
-                <p>
-                  A student or attacker holding a JSON credential cannot forge claims (like increasing their GPA or changing their degree) because doing so breaks the digital signature, which can only be computed with the university's private signing key.
                 </p>
               </div>
             </div>
-          ) : (
-            <div className="p-8 text-center text-slate-400">Loading initial report...</div>
           )}
         </div>
       </div>

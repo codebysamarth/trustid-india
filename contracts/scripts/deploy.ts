@@ -93,6 +93,7 @@ async function main() {
 
   const targets = [
     path.join(__dirname, "../../backend/src/config/contracts.json"),
+    path.join(__dirname, "../../backend/dist/config/contracts.json"),
     path.join(__dirname, "../../frontend/src/config/contracts.json"),
     path.join(__dirname, "../deployed-contracts.json"),
   ];

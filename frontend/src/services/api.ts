@@ -80,6 +80,37 @@ export async function revokeCredentialApi(data: {
   return res.json();
 }
 
+export async function recordCredentialApi(data: {
+  credential: any;
+  statusId?: string;
+  txHash?: string;
+}) {
+  const res = await fetch(`${API_BASE}/credentials/record`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return res.json();
+}
+
+export async function syncRevocationApi(data: {
+  credentialId?: string;
+  statusId?: string;
+  reason?: string;
+}) {
+  try {
+    const res = await fetch(`${API_BASE}/credentials/sync-revoked`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return res.json();
+  } catch (err) {
+    console.warn('Could not sync revocation with backend:', err);
+    return { success: false };
+  }
+}
+
 export async function fetchIssuedCredentials() {
   const res = await fetch(`${API_BASE}/credentials/issued`);
   return res.json();

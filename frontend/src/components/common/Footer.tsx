@@ -1,16 +1,16 @@
 import React from 'react';
-import { Shield, BookOpen, ExternalLink, Heart, AlertCircle, Cpu } from 'lucide-react';
+import { ShieldCheck, ExternalLink, AlertCircle, Cpu } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-[#070C18] border-t border-slate-800 text-slate-400 text-xs mt-16">
-      {/* Student Disclaimer Banner */}
-      <div className="bg-[#0B132B]/80 border-b border-slate-800/80 py-3 px-4">
-        <div className="max-w-7xl mx-auto flex items-start sm:items-center gap-2.5 text-slate-400">
-          <AlertCircle className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5 sm:mt-0" />
+    <footer className="bg-white border-t border-emerald-100 text-slate-500 text-xs mt-20">
+      {/* University Disclaimer Banner */}
+      <div className="bg-emerald-50/60 border-b border-emerald-100 py-3 px-4">
+        <div className="max-w-7xl mx-auto flex items-start sm:items-center gap-2.5 text-slate-600">
+          <AlertCircle className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5 sm:mt-0" />
           <p className="text-[11px] leading-relaxed">
-            <strong className="text-slate-300">University Assessment Prototype Notice:</strong> TrustID India is a technical demonstration of Self-Sovereign Identity (SSI) and W3C Verifiable Credentials for a Blockchain Technologies curriculum. It is <span className="underline decoration-cyan-500">not</span> an official Government of India portal, nor an integration with UIDAI Aadhaar, DigiLocker, or Digi Yatra. All identities and student records shown are fictitious demo samples.
+            <strong className="text-slate-800">University Assessment Prototype Notice:</strong> TrustID India is a technical demonstration of Self-Sovereign Identity (SSI) and W3C Verifiable Credentials for a Blockchain Technologies curriculum. All identities and student records shown are fictitious demonstration samples. Zero student PII is written to the blockchain.
           </p>
         </div>
       </div>
@@ -20,120 +20,75 @@ export const Footer: React.FC = () => {
           {/* Brand Info */}
           <div className="space-y-3 md:col-span-1">
             <div className="flex items-center gap-2">
-              <Shield className="w-5 h-5 text-cyan-400" />
-              <span className="font-bold text-white text-sm">TrustID India</span>
+              <ShieldCheck className="w-5 h-5 text-emerald-600" />
+              <span className="font-bold text-slate-900 text-sm">TrustID India</span>
             </div>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Your Credentials. Your Control. Independently Verifiable. Demonstrating privacy-preserving academic credential verification on local EVM blockchain.
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Your Credentials. Your Control. Independently Verifiable. Demonstrating privacy-preserving academic credential verification on EVM consortium blockchain.
             </p>
-            <div className="flex items-center gap-2 text-[11px] text-cyan-400/90 font-mono">
-              <Cpu className="w-3.5 h-3.5" />
-              <span>Hardhat EVM (Chain ID 31337)</span>
+            <div className="flex items-center gap-2 text-[11px] text-emerald-700 font-mono font-medium">
+              <Cpu className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Consortium EVM (Chain ID: 31337)</span>
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links: 2 Portals */}
           <div className="space-y-2">
-            <h4 className="font-semibold text-slate-200 text-xs uppercase tracking-wider">
-              Core Modules
+            <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">
+              Primary Portals
             </h4>
-            <ul className="space-y-1.5">
+            <ul className="space-y-1.5 font-medium">
               <li>
-                <Link to="/issuer" className="hover:text-cyan-400 transition">
-                  University Issuer Dashboard
+                <Link to="/issuer" className="hover:text-emerald-600 transition">
+                  🏛️ Organization Portal (Universities)
                 </Link>
               </li>
               <li>
-                <Link to="/wallet" className="hover:text-cyan-400 transition">
-                  Student Digital Wallet
+                <Link to="/wallet" className="hover:text-emerald-600 transition">
+                  🎓 Student Portal (Digital Wallet)
                 </Link>
               </li>
               <li>
-                <Link to="/verify" className="hover:text-cyan-400 transition">
-                  Credential Verification Portal
+                <Link to="/verify" className="hover:text-emerald-600 transition">
+                  🔍 Credential Verification Portal
                 </Link>
               </li>
               <li>
-                <Link to="/registry" className="hover:text-cyan-400 transition">
-                  On-Chain Status & Revocation
-                </Link>
-              </li>
-              <li>
-                <Link to="/tamper-demo" className="hover:text-cyan-400 transition">
-                  Cryptographic Tampering Demo
+                <Link to="/activity" className="hover:text-emerald-600 transition">
+                  ⛓️ On-Chain Blockchain Activity
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Verification & Standards */}
+          {/* Standards */}
           <div className="space-y-2">
-            <h4 className="font-semibold text-slate-200 text-xs uppercase tracking-wider">
-              Standards & Architecture
+            <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">
+              Cryptographic Standards
             </h4>
-            <ul className="space-y-1.5">
-              <li>
-                <Link to="/architecture" className="hover:text-cyan-400 transition">
-                  Trust Triangle Architecture
-                </Link>
-              </li>
-              <li>
-                <Link to="/demo" className="hover:text-cyan-400 transition">
-                  10-Step Guided Presentation Flow
-                </Link>
-              </li>
-              <li>
-                <a
-                  href="https://www.w3.org/TR/vc-data-model-2.0/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-cyan-400 inline-flex items-center gap-1 transition"
-                >
-                  W3C VC Data Model 2.0 <ExternalLink className="w-3 h-3" />
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://www.rfc-editor.org/rfc/rfc8785"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-cyan-400 inline-flex items-center gap-1 transition"
-                >
-                  RFC 8785 JSON Canonicalization <ExternalLink className="w-3 h-3" />
-                </a>
-              </li>
+            <ul className="space-y-1.5 text-slate-500">
+              <li>• W3C Verifiable Credentials 2.0</li>
+              <li>• RFC 8785 JSON Canonicalization</li>
+              <li>• ECDSA Secp256k1 Key Recovery</li>
+              <li>• Decentralized Identifiers (did:ethr)</li>
             </ul>
           </div>
 
-          {/* Smart Contracts & Security */}
+          {/* Privacy Guarantee */}
           <div className="space-y-2">
-            <h4 className="font-semibold text-slate-200 text-xs uppercase tracking-wider">
-              Decentralized Registries
+            <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider">
+              Privacy Architecture
             </h4>
-            <ul className="space-y-1.5 text-[11px] font-mono">
-              <li className="text-slate-300">
-                IssuerRegistry.sol
-              </li>
-              <li className="text-slate-400">
-                Accreditation & Institutional Keys
-              </li>
-              <li className="text-slate-300 pt-1">
-                CredentialStatusRegistry.sol
-              </li>
-              <li className="text-slate-400">
-                Opaque O(1) Status & Revocation Check
-              </li>
-              <li className="text-emerald-400 font-sans pt-1">
-                ✓ Zero PII Stored On-Chain
-              </li>
-            </ul>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Personal student data and grades are stored strictly off-chain in the student's personal wallet. The blockchain maintains only issuer accreditation and opaque revocation status hashes.
+            </p>
           </div>
         </div>
 
-        <div className="border-t border-slate-800/80 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-400">
-          <p>© 2026 TrustID India — University Blockchain Assessment Project</p>
-          <p className="flex items-center gap-1">
-            Built with React, TypeScript, Solidity, Hardhat & Ethers.js
+        <div className="border-t border-slate-100 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-400 text-[11px]">
+          <p>© 2026 TrustID India Prototype. Built for Blockchain Technologies Assessment.</p>
+          <p className="font-mono text-emerald-700 font-medium">
+            MetaMask EIP-191 & EVM Smart Contracts
           </p>
         </div>
       </div>

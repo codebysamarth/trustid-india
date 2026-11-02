@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { WalletProvider } from './context/WalletContext';
 import { DemoProvider } from './context/DemoContext';
 import { Navbar } from './components/common/Navbar';
@@ -14,26 +14,29 @@ import { TamperDemo } from './pages/TamperDemo';
 import { RevocationDemo } from './pages/RevocationDemo';
 import { ActivityPage } from './pages/ActivityPage';
 import { ArchitecturePage } from './pages/ArchitecturePage';
-import { GuidedDemoPage } from './pages/GuidedDemoPage';
 
 export const App: React.FC = () => {
   return (
     <WalletProvider>
       <DemoProvider>
         <Router>
-          <div className="min-h-screen flex flex-col bg-[#070C18] text-slate-100 selection:bg-cyan-500 selection:text-white">
+          <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 selection:bg-emerald-500 selection:text-white">
             <Navbar />
             <main className="flex-1">
               <Routes>
                 <Route path="/" element={<LandingPage />} />
+                {/* 2 Primary Portals: Organization & Student */}
                 <Route path="/issuer" element={<IssuerDashboard />} />
+                <Route path="/organization" element={<Navigate to="/issuer" replace />} />
                 <Route path="/wallet" element={<StudentWallet />} />
+                <Route path="/student" element={<Navigate to="/wallet" replace />} />
+                {/* Verifier & Explorer */}
                 <Route path="/verify" element={<VerifyPortal />} />
-                <Route path="/registry" element={<RevocationDemo />} />
-                <Route path="/tamper-demo" element={<TamperDemo />} />
                 <Route path="/activity" element={<ActivityPage />} />
+                <Route path="/tamper-demo" element={<TamperDemo />} />
+                <Route path="/registry" element={<RevocationDemo />} />
                 <Route path="/architecture" element={<ArchitecturePage />} />
-                <Route path="/demo" element={<GuidedDemoPage />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </main>
             <Footer />

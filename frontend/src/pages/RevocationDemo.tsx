@@ -19,12 +19,13 @@ import {
   verifyCredentialApi,
   revokeCredentialApi,
 } from '../services/api';
+import { revokeCredentialOnChainWithMetaMask } from '../services/contractService';
 import { useWallet } from '../context/WalletContext';
 import { TrustIdVerifiableCredential, VerificationReport } from '../types';
 import { StatusBadge } from '../components/common/StatusBadge';
 
 export const RevocationDemo: React.FC = () => {
-  const { address } = useWallet();
+  const { address, signer, isMetaMaskConnected } = useWallet();
 
   const [activeVc, setActiveVc] = useState<TrustIdVerifiableCredential | null>(null);
   const [isRevokedOnChain, setIsRevokedOnChain] = useState<boolean>(false);
@@ -76,105 +77,122 @@ export const RevocationDemo: React.FC = () => {
     setErrorMessage(null);
 
     try {
-      const res = await revokeCredentialApi({
-        credentialId: activeVc.id,
-        statusId: activeVc.credentialStatus.id,
-        reason: revocationReason,
-      });
-
-      if (res.success) {
+      if (isMetaMaskConnected && signer) {
+        setStatusMessage('MetaMask Action: Please confirm the revocation transaction in your MetaMask popup window...');
+        const txRes = await revokeCredentialOnChainWithMetaMask(
+          signer,
+          activeVc.credentialStatus.id,
+          revocationReason
+        );
         setStatusMessage(
-          `Revocation transaction mined! Tx: ${res.transactionHash?.substring(0, 16)}...`
+          `Revocation transaction confirmed on-chain via MetaMask! Tx: ${txRes.transactionHash.substring(0, 16)}...`
         );
         setIsRevokedOnChain(true);
-        // Immediately re-verify to demonstrate the difference!
         await verifyCurrentState(activeVc);
       } else {
-        setErrorMessage(res.error || 'Failed to revoke credential on-chain');
+        const res = await revokeCredentialApi({
+          credentialId: activeVc.id,
+          statusId: activeVc.credentialStatus.id,
+          reason: revocationReason,
+        });
+
+        if (res.success) {
+          setStatusMessage(
+            `Revocation transaction mined! Tx: ${res.transactionHash?.substring(0, 16)}...`
+          );
+          setIsRevokedOnChain(true);
+          await verifyCurrentState(activeVc);
+        } else {
+          setErrorMessage(res.error || 'Failed to revoke credential on-chain');
+        }
       }
     } catch (err: any) {
-      setErrorMessage(`Revocation error: ${err.message}`);
+      if (err.code === 4001 || err.message?.includes('rejected')) {
+        setErrorMessage('Revocation transaction was rejected in MetaMask.');
+      } else {
+        setErrorMessage(`Revocation error: ${err.message || String(err)}`);
+      }
     } finally {
       setIsProcessingRevoke(false);
     }
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-amber-950/80 border border-amber-500/30 text-amber-400 rounded-lg">
+            <span className="p-1.5 bg-amber-50 text-amber-700 rounded-lg">
               <Layers className="w-5 h-5" />
-            </div>
-            <span className="text-xs uppercase tracking-wider font-semibold text-amber-400">
+            </span>
+            <span className="text-xs uppercase tracking-wider font-bold text-amber-800">
               Decentralized Status Registry Lifecycle
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
+          <h1 className="text-2xl font-extrabold text-slate-900 mt-1">
             Credential Revocation & On-Chain Status Demonstration
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             Demonstrate how an authorized university revokes a credential on the blockchain, and how verifiers detect it while the cryptographic signature remains intact.
           </p>
         </div>
 
         <button
           onClick={loadTestCredential}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition active:scale-95"
         >
-          <RotateCcw className="w-4 h-4 text-cyan-400" />
+          <RotateCcw className="w-4 h-4 text-emerald-600" />
           Reset to Fresh Active Credential
         </button>
       </div>
 
       {/* Notifications */}
       {statusMessage && (
-        <div className="p-4 rounded-xl bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 text-xs flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>{statusMessage}</span>
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span className="font-medium">{statusMessage}</span>
           </div>
           <button onClick={() => setStatusMessage(null)}>✕</button>
         </div>
       )}
 
       {errorMessage && (
-        <div className="p-4 rounded-xl bg-rose-950/60 border border-rose-500/40 text-rose-300 text-xs flex items-center justify-between">
+        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs flex items-center justify-between shadow-sm">
           <div className="flex items-center gap-2">
-            <AlertCircle className="w-4 h-4 text-rose-400 shrink-0" />
-            <span>{errorMessage}</span>
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+            <span className="font-medium">{errorMessage}</span>
           </div>
           <button onClick={() => setErrorMessage(null)}>✕</button>
         </div>
       )}
 
       {/* Step by Step Workflow Progression */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
         <div
-          className={`p-4 rounded-2xl border ${
+          className={`p-5 rounded-2xl border ${
             !isRevokedOnChain
-              ? 'bg-[#131F42] border-cyan-500/40 text-white'
-              : 'bg-[#0E172E] border-slate-800 text-slate-400'
+              ? 'bg-emerald-50/70 border-emerald-300 text-emerald-950 shadow-sm'
+              : 'bg-slate-50 border-slate-200 text-slate-400'
           }`}
         >
-          <span className="text-[10px] uppercase font-mono text-cyan-400 block font-semibold">
+          <span className="text-[10px] uppercase font-mono text-emerald-800 block font-bold">
             STATE 1: BEFORE REVOCATION
           </span>
-          <div className="font-bold text-sm mt-1">Authentic & Active</div>
-          <p className="text-[11px] text-slate-300 mt-1">
+          <div className="font-bold text-sm mt-1 text-slate-900">Authentic & Active</div>
+          <p className="text-[11px] text-slate-600 mt-1">
             Signature is valid and the smart contract reports status as ACTIVE.
           </p>
-          <div className="mt-2.5 font-mono text-[10px] text-emerald-400">
-            ✓ SIGNATURE VALID <br />
-            ✓ CREDENTIAL ACTIVE <br />
-            ✓ VERIFICATION SUCCESSFUL
+          <div className="mt-2.5 font-mono text-[11px] text-emerald-700 font-bold space-y-0.5">
+            <div>✓ SIGNATURE VALID</div>
+            <div>✓ CREDENTIAL ACTIVE</div>
+            <div>✓ VERIFICATION SUCCESSFUL</div>
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl border bg-[#131F42] border-amber-500/40 text-white space-y-2">
-          <span className="text-[10px] uppercase font-mono text-amber-400 block font-semibold">
+        <div className="p-5 rounded-2xl border bg-white border-amber-300 shadow-sm text-slate-900 space-y-3">
+          <span className="text-[10px] uppercase font-mono text-amber-800 block font-bold">
             ACTION: TRIGGER ON-CHAIN REVOCATION
           </span>
           <div className="font-bold text-sm">Issuer Revocation</div>
@@ -182,104 +200,82 @@ export const RevocationDemo: React.FC = () => {
             type="text"
             value={revocationReason}
             onChange={(e) => setRevocationReason(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-[11px] text-white"
+            className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs text-slate-900 focus:outline-none focus:border-rose-500"
             placeholder="Revocation Reason"
           />
           <button
             onClick={handleRevokeOnChain}
             disabled={isProcessingRevoke || isRevokedOnChain}
-            className="w-full py-2 rounded-lg bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs transition disabled:opacity-50 flex items-center justify-center gap-1.5 shadow"
+            className="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs transition disabled:opacity-50 flex items-center justify-center gap-1.5 shadow"
           >
             {isProcessingRevoke ? (
               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
             ) : (
               <Trash2 className="w-3.5 h-3.5" />
             )}
-            {isRevokedOnChain ? 'Already Revoked on Blockchain' : 'Revoke Credential Now'}
+            {isRevokedOnChain
+              ? 'Already Revoked on Blockchain'
+              : isMetaMaskConnected
+              ? '🦊 Revoke on Blockchain via MetaMask'
+              : 'Revoke Credential Now'}
           </button>
         </div>
 
         <div
-          className={`p-4 rounded-2xl border ${
+          className={`p-5 rounded-2xl border ${
             isRevokedOnChain
-              ? 'bg-rose-950/30 border-rose-500/40 text-white'
-              : 'bg-[#0E172E] border-slate-800 text-slate-400'
+              ? 'bg-rose-50/70 border-rose-300 text-rose-950 shadow-sm'
+              : 'bg-slate-50 border-slate-200 text-slate-400'
           }`}
         >
-          <span className="text-[10px] uppercase font-mono text-rose-400 block font-semibold">
+          <span className="text-[10px] uppercase font-mono text-rose-800 block font-bold">
             STATE 2: AFTER REVOCATION
           </span>
-          <div className="font-bold text-sm mt-1">Signature Valid, Status Fails</div>
-          <p className="text-[11px] text-slate-300 mt-1">
-            The cryptographic signature is untouched, but on-chain status check rejects the credential.
+          <div className="font-bold text-sm mt-1 text-slate-900">Cryptographically Valid but Revoked</div>
+          <p className="text-[11px] text-slate-600 mt-1">
+            The signature remains genuine, but smart contract reports REVOKED.
           </p>
-          <div className="mt-2.5 font-mono text-[10px] text-rose-300">
-            ✓ SIGNATURE VALID <br />
-            ✕ CREDENTIAL REVOKED <br />
-            ✕ VERIFICATION FAILED
+          <div className="mt-2.5 font-mono text-[11px] text-rose-700 font-bold space-y-0.5">
+            <div>✓ SIGNATURE: VALID</div>
+            <div>✗ ON-CHAIN STATUS: REVOKED</div>
+            <div>✗ VERIFICATION: FAILED</div>
           </div>
         </div>
       </div>
 
-      {/* Verification Engine Real-Time Output */}
+      {/* Verification Diagnostics */}
       {report && (
-        <div className="bg-[#131F42]/80 border border-slate-700 rounded-2xl p-6 sm:p-7 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
-            <div>
-              <span className="text-[10px] uppercase font-mono tracking-wider text-slate-400">
-                Independent Verifier Output
-              </span>
-              <h3 className="text-xl font-extrabold text-white mt-0.5">
-                {report.overallOutcome}
-              </h3>
-            </div>
+        <div className="bg-white border border-emerald-100 rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 className="text-sm font-bold text-slate-900">
+              Live Cryptographic Verification Breakdown
+            </h3>
             <StatusBadge
-              status={report.isValid ? 'ACTIVE' : 'REVOKED'}
-              label={report.isValid ? 'CREDENTIAL VERIFIED' : 'VERIFICATION REJECTED'}
-              size="lg"
+              status={report.isValid ? 'VALID' : 'REVOKED'}
+              label={report.isValid ? 'CREDENTIAL VALID' : 'CREDENTIAL REVOKED ON-CHAIN'}
             />
           </div>
 
-          {/* Key Educational Distinction */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-white flex items-center gap-1.5">
-                  <KeyRound className="w-4 h-4 text-cyan-400" />
-                  Check 2: Cryptographic Signature
-                </span>
-                <StatusBadge status={report.checks.signature.status} size="sm" />
-              </div>
-              <p className="text-slate-300 text-[11px] leading-relaxed">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+            <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+              <span className="font-bold text-slate-800 block">Signature Check (ECDSA):</span>
+              <p className="text-emerald-700 font-medium">
                 {report.checks.signature.message}
               </p>
-              <div className="text-[10px] text-emerald-400 font-mono pt-1">
-                Notice: The cryptographic signature is STILL COMPLETELY VALID because the physical credential claims were never modified.
-              </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="font-bold text-white flex items-center gap-1.5">
-                  <Layers className="w-4 h-4 text-amber-400" />
-                  Check 5: On-Chain Revocation Status
-                </span>
-                <StatusBadge status={report.checks.revocation.status} size="sm" />
-              </div>
-              <p className="text-slate-300 text-[11px] leading-relaxed">
+            <div
+              className={`p-4 rounded-xl border space-y-1 ${
+                report.checks.revocation.status === 'PASSED'
+                  ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                  : 'bg-rose-50 border-rose-200 text-rose-900'
+              }`}
+            >
+              <span className="font-bold block">On-Chain Revocation Status:</span>
+              <p className="font-medium">
                 {report.checks.revocation.message}
               </p>
-              <div className="text-[10px] text-rose-300 font-mono pt-1">
-                Notice: The verifier caught the revocation by independently querying the decentralized smart contract registry!
-              </div>
             </div>
-          </div>
-
-          <div className="p-4 bg-slate-950/70 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed space-y-1">
-            <strong className="text-white block">Key Architectural Takeaway:</strong>
-            <p>
-              This demonstration proves why cryptographic signature verification alone is insufficient for real-world identity. A credential can be legitimately issued, but subsequent events (such as academic misconduct, degree revocation, or license suspension) require an independent, real-time revocation registry. The blockchain provides this registry without revealing student PII.
-            </p>
           </div>
         </div>
       )}

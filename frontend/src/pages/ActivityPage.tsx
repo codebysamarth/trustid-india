@@ -21,7 +21,6 @@ export const ActivityPage: React.FC = () => {
   const [networkInfo, setNetworkInfo] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [filterType, setFilterType] = useState<string>('ALL');
-  const [selectedEvent, setSelectedEvent] = useState<BlockchainEventLog | null>(null);
 
   useEffect(() => {
     loadActivity();
@@ -54,171 +53,151 @@ export const ActivityPage: React.FC = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-emerald-100 shadow-sm">
         <div>
           <div className="flex items-center gap-2">
-            <div className="p-2 bg-cyan-950/80 border border-cyan-500/30 text-cyan-400 rounded-lg">
+            <span className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg">
               <Activity className="w-5 h-5" />
-            </div>
-            <span className="text-xs uppercase tracking-wider font-semibold text-cyan-400">
-              On-Chain Audit Transparency
+            </span>
+            <span className="text-xs uppercase tracking-wider font-bold text-emerald-700">
+              Audit Transparency
             </span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
+          <h1 className="text-2xl font-extrabold text-slate-900 mt-1">
             Blockchain Activity Explorer
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
-            Real-time event stream queried directly from IssuerRegistry and CredentialStatusRegistry smart contracts on the local EVM blockchain.
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+            Real-time event stream queried directly from IssuerRegistry and CredentialStatusRegistry smart contracts.
           </p>
         </div>
 
         <button
           onClick={loadActivity}
           disabled={isLoading}
-          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition"
+          className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition active:scale-95"
         >
-          <RefreshCw className={`w-4 h-4 text-cyan-400 ${isLoading ? 'animate-spin' : ''}`} />
-          Refresh Activity Logs
+          <RefreshCw className={`w-4 h-4 text-emerald-600 ${isLoading ? 'animate-spin' : ''}`} />
+          Refresh Ledger Events
         </button>
       </div>
 
       {/* Network Stats Cards */}
       {networkInfo && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-          <div className="bg-[#131F42]/60 border border-slate-800 rounded-xl p-4 space-y-1">
-            <span className="text-[10px] uppercase font-mono text-slate-400">Node Status</span>
+          <div className="bg-white border border-emerald-100 rounded-xl p-4 shadow-sm space-y-1">
+            <span className="text-[10px] uppercase font-bold text-slate-500">Node Status</span>
             <div className="flex items-center gap-2">
               <div
                 className={`w-2 h-2 rounded-full ${
-                  networkInfo.connected ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'
+                  networkInfo.connected ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'
                 }`}
               />
-              <span className="text-sm font-bold text-white">
-                {networkInfo.connected ? 'Connected to EVM' : 'Offline / Standalone'}
+              <span className="text-sm font-bold text-slate-900">
+                {networkInfo.connected ? 'Connected to EVM' : 'Offline'}
               </span>
             </div>
-            <span className="text-[10px] text-slate-400 font-mono">
-              Chain ID: {networkInfo.chainId}
-            </span>
           </div>
 
-          <div className="bg-[#131F42]/60 border border-slate-800 rounded-xl p-4 space-y-1">
-            <span className="text-[10px] uppercase font-mono text-slate-400">Current Block</span>
-            <p className="text-lg font-bold text-cyan-300 font-mono">
-              #{networkInfo.currentBlock || 0}
-            </p>
-            <span className="text-[10px] text-slate-400">Hardhat Localhost</span>
+          <div className="bg-white border border-emerald-100 rounded-xl p-4 shadow-sm space-y-1">
+            <span className="text-[10px] uppercase font-bold text-slate-500">Current Block</span>
+            <div className="text-base font-extrabold font-mono text-emerald-700">
+              #{networkInfo.currentBlock ?? '0'}
+            </div>
           </div>
 
-          <div className="bg-[#131F42]/60 border border-slate-800 rounded-xl p-4 space-y-1">
-            <span className="text-[10px] uppercase font-mono text-slate-400">IssuerRegistry Contract</span>
-            <p className="text-xs font-mono text-slate-300 truncate font-semibold">
-              {networkInfo.contracts?.IssuerRegistry?.address
-                ? `${networkInfo.contracts.IssuerRegistry.address.substring(0, 10)}...`
-                : 'Not Deployed'}
-            </p>
-            <span className="text-[10px] text-emerald-400">Accreditation Trust Anchor</span>
+          <div className="bg-white border border-emerald-100 rounded-xl p-4 shadow-sm space-y-1">
+            <span className="text-[10px] uppercase font-bold text-slate-500">Network ID</span>
+            <div className="text-base font-extrabold font-mono text-slate-800">
+              Chain {networkInfo.chainId || 31337}
+            </div>
           </div>
 
-          <div className="bg-[#131F42]/60 border border-slate-800 rounded-xl p-4 space-y-1">
-            <span className="text-[10px] uppercase font-mono text-slate-400">Status Registry Contract</span>
-            <p className="text-xs font-mono text-slate-300 truncate font-semibold">
-              {networkInfo.contracts?.CredentialStatusRegistry?.address
-                ? `${networkInfo.contracts.CredentialStatusRegistry.address.substring(0, 10)}...`
-                : 'Not Deployed'}
-            </p>
-            <span className="text-[10px] text-indigo-400">O(1) Status Verification</span>
+          <div className="bg-white border border-emerald-100 rounded-xl p-4 shadow-sm space-y-1">
+            <span className="text-[10px] uppercase font-bold text-slate-500">Recorded Events</span>
+            <div className="text-base font-extrabold font-mono text-slate-800">
+              {events.length} Events
+            </div>
           </div>
         </div>
       )}
 
-      {/* Filter Tabs */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-3">
-        <div className="flex items-center gap-1.5">
-          {['ALL', 'CredentialRegistered', 'CredentialRevoked', 'IssuerRegistered', 'IssuerAuthorized'].map(
-            (t) => (
+      {/* Events Table Container */}
+      <div className="bg-white border border-emerald-100 rounded-2xl p-6 shadow-sm space-y-4">
+        {/* Filters */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {['ALL', 'CredentialRegistered', 'CredentialRevoked', 'IssuerRegistered'].map((t) => (
               <button
                 key={t}
                 onClick={() => setFilterType(t)}
-                className={`px-3 py-1 rounded-lg text-xs font-medium transition ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition ${
                   filterType === t
-                    ? 'bg-cyan-600 text-white font-semibold shadow'
-                    : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                    ? 'bg-emerald-600 text-white shadow-sm'
+                    : 'bg-slate-100 hover:bg-slate-200 text-slate-600'
                 }`}
               >
-                {t === 'ALL' ? 'All On-Chain Events' : t}
+                {t === 'ALL'
+                  ? 'All Events'
+                  : t === 'CredentialRegistered'
+                  ? 'Credentials Issued'
+                  : t === 'CredentialRevoked'
+                  ? 'Revocations'
+                  : 'University Accreditations'}
               </button>
-            )
-          )}
+            ))}
+          </div>
+
+          <span className="text-xs text-slate-500">
+            Showing {filteredEvents.length} transactions
+          </span>
         </div>
 
-        <span className="text-xs text-slate-400 font-mono">
-          Showing {filteredEvents.length} real blockchain events
-        </span>
-      </div>
-
-      {/* Event Stream Table */}
-      <div className="bg-[#131F42]/60 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
+        {/* Table */}
         {filteredEvents.length === 0 ? (
-          <div className="p-12 text-center space-y-3">
-            <Activity className="w-12 h-12 text-slate-600 mx-auto" />
-            <h4 className="text-sm font-semibold text-slate-300">
-              No Blockchain Events Found
-            </h4>
-            <p className="text-xs text-slate-400 max-w-sm mx-auto">
-              Issue a credential or register an issuer to see real events emitted from the smart contracts.
-            </p>
+          <div className="py-12 text-center text-xs text-slate-500">
+            No events found matching filter.
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs text-slate-300">
-              <thead className="bg-[#0A1024] text-[11px] font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-800">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
                 <tr>
-                  <th className="py-3 px-4">Event Name</th>
-                  <th className="py-3 px-4">Description</th>
-                  <th className="py-3 px-4">Block #</th>
-                  <th className="py-3 px-4">Transaction Hash</th>
-                  <th className="py-3 px-4">Timestamp</th>
-                  <th className="py-3 px-4 text-right">Details</th>
+                  <th className="p-3">Event Type</th>
+                  <th className="p-3">Block</th>
+                  <th className="p-3">Transaction Hash</th>
+                  <th className="p-3">Contract Address</th>
+                  <th className="p-3">Timestamp</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/80">
-                {filteredEvents.map((evt) => (
-                  <tr key={evt.id} className="hover:bg-slate-800/30 transition">
-                    <td className="py-3.5 px-4">
+              <tbody className="divide-y divide-slate-100">
+                {filteredEvents.map((evt, idx) => (
+                  <tr key={idx} className="hover:bg-slate-50 transition">
+                    <td className="p-3">
                       <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold font-mono border ${
+                        className={`font-mono text-[11px] font-bold px-2 py-0.5 rounded-full ${
                           evt.eventName === 'CredentialRegistered'
-                            ? 'bg-cyan-950 text-cyan-300 border-cyan-800'
+                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
                             : evt.eventName === 'CredentialRevoked'
-                            ? 'bg-rose-950 text-rose-300 border-rose-800'
-                            : 'bg-indigo-950 text-indigo-300 border-indigo-800'
+                            ? 'bg-rose-50 text-rose-800 border border-rose-200'
+                            : 'bg-teal-50 text-teal-800 border border-teal-200'
                         }`}
                       >
                         {evt.eventName}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 font-sans text-xs text-slate-200">
-                      {evt.description}
-                    </td>
-                    <td className="py-3.5 px-4 font-mono text-[11px] text-cyan-400">
+                    <td className="p-3 font-mono font-bold text-slate-800">
                       #{evt.blockNumber}
                     </td>
-                    <td className="py-3.5 px-4 font-mono text-[11px] text-slate-400">
-                      {evt.transactionHash.substring(0, 14)}...
+                    <td className="p-3 font-mono text-[11px] text-emerald-700">
+                      {evt.transactionHash?.substring(0, 14)}...
                     </td>
-                    <td className="py-3.5 px-4 font-mono text-[11px] text-slate-400">
-                      {new Date(evt.timestamp * 1000).toLocaleTimeString()}
+                    <td className="p-3 font-mono text-[11px] text-slate-500">
+                      {evt.contractAddress?.substring(0, 10)}...
                     </td>
-                    <td className="py-3.5 px-4 text-right">
-                      <button
-                        onClick={() => setSelectedEvent(evt)}
-                        className="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] border border-slate-700 transition"
-                      >
-                        Inspect
-                      </button>
+                    <td className="p-3 text-slate-500 text-[11px]">
+                      {new Date(evt.timestamp).toLocaleTimeString()}
                     </td>
                   </tr>
                 ))}
@@ -227,73 +206,6 @@ export const ActivityPage: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Transaction Details Modal */}
-      {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="max-w-2xl w-full bg-[#0E172E] border border-slate-700 rounded-2xl p-6 shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Box className="w-5 h-5 text-cyan-400" />
-                Decentralized Event Audit Details
-              </h3>
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="text-slate-400 hover:text-white"
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className="space-y-3 text-xs">
-              <div className="grid grid-cols-2 gap-3 bg-slate-950 p-3 rounded-xl border border-slate-800">
-                <div>
-                  <span className="text-slate-500 block text-[10px]">Event:</span>
-                  <span className="font-bold text-cyan-300 font-mono">
-                    {selectedEvent.eventName}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-slate-500 block text-[10px]">Block Number:</span>
-                  <span className="font-bold text-white font-mono">
-                    #{selectedEvent.blockNumber}
-                  </span>
-                </div>
-                <div className="col-span-2">
-                  <span className="text-slate-500 block text-[10px]">Transaction Hash:</span>
-                  <span className="font-mono text-[11px] text-slate-300 break-all">
-                    {selectedEvent.transactionHash}
-                  </span>
-                </div>
-                <div className="col-span-2">
-                  <span className="text-slate-500 block text-[10px]">Contract Address:</span>
-                  <span className="font-mono text-[11px] text-slate-300 break-all">
-                    {selectedEvent.contractAddress}
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider block mb-1">
-                  Decoded Event Parameters:
-                </span>
-                <pre className="p-3 bg-slate-950 rounded-xl border border-slate-800 font-mono text-[11px] text-cyan-200 overflow-x-auto">
-                  {JSON.stringify(selectedEvent.args, null, 2)}
-                </pre>
-              </div>
-            </div>
-
-            <div className="flex justify-end pt-2">
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold rounded-lg"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

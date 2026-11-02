@@ -1,436 +1,428 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
-  Shield,
+  ShieldCheck,
+  Building2,
   GraduationCap,
   CheckCircle2,
   Lock,
-  Database,
-  EyeOff,
-  Flame,
   ArrowRight,
-  FileCheck,
-  FileX,
-  Server,
   KeyRound,
-  Users,
-  AlertTriangle,
-  PlayCircle,
-  HelpCircle,
+  FileCheck,
+  Flame,
+  Activity,
+  Layers,
+  Sparkles,
+  Search,
+  ExternalLink,
   Cpu,
+  BadgeCheck,
 } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
+  const [quickSearchId, setQuickSearchId] = useState('');
+  const navigate = useNavigate();
+
+  const handleQuickVerify = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (quickSearchId.trim()) {
+      navigate(`/verify?id=${encodeURIComponent(quickSearchId.trim())}`);
+    } else {
+      navigate('/verify');
+    }
+  };
+
   return (
-    <div className="space-y-20 py-8">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden pt-6 pb-12 sm:pt-12 sm:pb-16 text-center">
-        {/* Glow ambient background */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-gradient-to-tr from-cyan-500/10 via-blue-600/10 to-indigo-600/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="space-y-16 py-4">
+      {/* =========================================================================
+          HERO SECTION (Coinbase-Inspired Split Layout)
+          Clean white background, bold display typography, floating credential mockup
+         ========================================================================= */}
+      <section className="relative overflow-hidden pt-6 pb-12 sm:pt-10 sm:pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+            
+            {/* Left Column: Hero Content & Actions */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              
+              {/* Eyebrow Pill Badge (Coinbase style) */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-sm">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Next-Gen Academic Verifiable Credentials</span>
+                <span className="text-emerald-500 font-normal">→</span>
+              </div>
 
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 space-y-6">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/70 border border-cyan-500/30 text-cyan-300 text-xs font-semibold">
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            Blockchain-Assisted Self-Sovereign Identity (SSI) Platform
-          </div>
+              {/* Bold Display Headline */}
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-950 tracking-tight leading-[1.12]">
+                Trust your credentials,{' '}
+                <span className="text-emerald-600 block sm:inline">
+                  not just the document.
+                </span>
+              </h1>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.15]">
-            Trust Your Credentials, <br />
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400 bg-clip-text text-transparent">
-              Not Just the Document.
-            </span>
-          </h1>
+              {/* Punchy Subtitle */}
+              <p className="text-base sm:text-lg text-slate-600 font-normal leading-relaxed max-w-xl">
+                TrustID India is a consortium blockchain platform where universities digitally sign academic degrees with MetaMask, students hold credentials off-chain, and employers verify authenticity in seconds.
+              </p>
 
-          <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-300 font-normal leading-relaxed">
-            TrustID India demonstrates how digitally signed credentials and blockchain-assisted verification can simplify academic credential verification while reducing repeated document submissions.
-          </p>
+              {/* Quick Actions (Dual Portals + Quick Verify Input) */}
+              <div className="pt-2 space-y-4">
+                
+                {/* Two Primary Portal CTA Buttons */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                  <Link
+                    to="/issuer"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-md shadow-emerald-600/20 transition active:scale-95"
+                  >
+                    <Building2 className="w-4 h-4" />
+                    <span>Organization Portal</span>
+                    <ArrowRight className="w-4 h-4 ml-1" />
+                  </Link>
 
-          <div className="flex flex-wrap items-center justify-center gap-3.5 pt-4">
-            <Link
-              to="/demo"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold text-sm shadow-lg shadow-cyan-950/60 transition"
-            >
-              <PlayCircle className="w-4 h-4" />
-              Explore Guided Demo
-            </Link>
-            <Link
-              to="/issuer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-semibold text-sm border border-slate-700 transition"
-            >
-              <GraduationCap className="w-4 h-4 text-cyan-400" />
-              Issue a Credential
-            </Link>
-            <Link
-              to="/verify"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-sm border border-slate-700 transition"
-            >
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              Verify a Credential
-            </Link>
-          </div>
+                  <Link
+                    to="/wallet"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-sm shadow-sm transition active:scale-95"
+                  >
+                    <GraduationCap className="w-4 h-4" />
+                    <span>Student Digital Wallet</span>
+                  </Link>
+                </div>
 
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-8 max-w-3xl mx-auto text-left">
-            <div className="bg-[#131F42]/60 border border-slate-800 rounded-xl p-3.5">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Standard</span>
-              <p className="text-sm font-bold text-white mt-0.5">W3C VC Data Model 2.0</p>
+                {/* Instant Verification Search Bar (Coinbase style action input) */}
+                <form
+                  onSubmit={handleQuickVerify}
+                  className="max-w-xl flex items-center bg-white border border-slate-200 hover:border-emerald-300 rounded-full p-1.5 shadow-sm focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 transition-all"
+                >
+                  <div className="pl-3.5 text-slate-400">
+                    <Search className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Enter Credential ID or inspect sample degree..."
+                    value={quickSearchId}
+                    onChange={(e) => setQuickSearchId(e.target.value)}
+                    className="flex-1 bg-transparent px-3 py-2 text-xs sm:text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 rounded-full bg-emerald-100 hover:bg-emerald-200 text-emerald-800 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>Verify Credential</span>
+                  </button>
+                </form>
+
+                {/* Micro Trust Indicators */}
+                <div className="flex flex-wrap items-center gap-y-2 gap-x-5 text-[11px] font-semibold text-slate-500 pt-1">
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    W3C VC 2.0 Standard
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    Secp256k1 MetaMask Signatures
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                    Zero-PII On-Chain
+                  </span>
+                </div>
+              </div>
+
             </div>
-            <div className="bg-[#131F42]/60 border border-slate-800 rounded-xl p-3.5">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Cryptography</span>
-              <p className="text-sm font-bold text-cyan-300 mt-0.5">RFC 8785 + Secp256k1</p>
+
+            {/* Right Column: Floating High-Fidelity Credential Mockup (Coinbase Style) */}
+            <div className="lg:col-span-5 relative flex justify-center">
+              
+              {/* Decorative Background Blob */}
+              <div className="absolute -inset-4 bg-gradient-to-tr from-emerald-100/50 via-teal-50/30 to-slate-100/40 rounded-[2.5rem] filter blur-xl -z-10 transform -rotate-1" />
+
+              {/* Outer Layered Container */}
+              <div className="w-full max-w-md relative">
+                
+                {/* Secondary Floating Card Behind (Offset Depth) */}
+                <div className="hidden sm:block absolute -top-4 -right-4 w-full h-full bg-slate-100/80 border border-slate-200/90 rounded-3xl transform rotate-2 -z-10 shadow-sm" />
+
+                {/* Primary Floating Verifiable Credential Card */}
+                <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-2xl shadow-slate-200/80 space-y-5">
+                  
+                  {/* Card Header: Issuer Info & Verified Badge */}
+                  <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center font-extrabold text-sm border border-emerald-100 shadow-sm">
+                        <Building2 className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <h4 className="text-xs font-extrabold text-slate-900 tracking-tight">
+                            VISHWAKARMA INSTITUTE OF TECH
+                          </h4>
+                          <BadgeCheck className="w-3.5 h-3.5 text-emerald-600" />
+                        </div>
+                        <span className="text-[10px] font-mono text-slate-400">
+                          Accredited Consortium Issuer
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-extrabold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      ON-CHAIN VALID
+                    </span>
+                  </div>
+
+                  {/* Degree Claims Section */}
+                  <div className="space-y-3">
+                    <div>
+                      <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
+                        Conferred Credential
+                      </span>
+                      <h3 className="text-base font-extrabold text-slate-900">
+                        Bachelor of Technology in Computer Engineering
+                      </h3>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-1">
+                      <div className="bg-slate-50 border border-slate-100 rounded-xl p-2.5">
+                        <span className="text-[10px] text-slate-400 block font-medium">Graduate</span>
+                        <span className="text-xs font-bold text-slate-800">Samarath Sharma</span>
+                      </div>
+                      <div className="bg-slate-50 border border-slate-100 rounded-xl p-2.5">
+                        <span className="text-[10px] text-slate-400 block font-medium">CGPA / Honors</span>
+                        <span className="text-xs font-bold text-emerald-700">9.42 / First Class Dist.</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Cryptographic Verification Anchor Box */}
+                  <div className="bg-slate-950 text-slate-200 rounded-2xl p-3.5 space-y-2 text-[11px] font-mono">
+                    <div className="flex items-center justify-between text-slate-400 text-[10px] font-sans font-bold uppercase tracking-wider">
+                      <span className="flex items-center gap-1">
+                        <Cpu className="w-3 h-3 text-emerald-400" />
+                        ECDSA Secp256k1 Proof
+                      </span>
+                      <span className="text-emerald-400">MATH VALID</span>
+                    </div>
+                    <div className="text-[10px] text-slate-300 truncate">
+                      <span className="text-slate-500">Signer: </span>
+                      0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+                    </div>
+                    <div className="text-[10px] text-slate-300 truncate">
+                      <span className="text-slate-500">Status Hash: </span>
+                      0x4e9c71...d31be0
+                    </div>
+                  </div>
+
+                  {/* Action Link to Wallet / Verify */}
+                  <div className="flex items-center justify-between pt-1">
+                    <Link
+                      to="/verify"
+                      className="text-xs font-bold text-emerald-700 hover:text-emerald-800 flex items-center gap-1"
+                    >
+                      <span>Audit full 7-stage cryptographic proof</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                    <span className="text-[10px] font-mono text-slate-400">Block #1</span>
+                  </div>
+
+                </div>
+              </div>
+
             </div>
-            <div className="bg-[#131F42]/60 border border-slate-800 rounded-xl p-3.5">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Privacy</span>
-              <p className="text-sm font-bold text-emerald-300 mt-0.5">Off-Chain Custody (No PII)</p>
-            </div>
-            <div className="bg-[#131F42]/60 border border-slate-800 rounded-xl p-3.5">
-              <span className="text-[10px] uppercase tracking-wider text-slate-400 font-mono">Status Check</span>
-              <p className="text-sm font-bold text-indigo-300 mt-0.5">O(1) Smart Contract</p>
-            </div>
+
           </div>
         </div>
       </section>
 
-      {/* SECTION 1: The Problem with Traditional Verification */}
+      {/* =========================================================================
+          ROLE SELECTION (Organization vs Student)
+         ========================================================================= */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-xs font-semibold tracking-wider uppercase text-cyan-400">
-            Current Industry Challenges
+        <div className="text-center max-w-2xl mx-auto mb-8">
+          <span className="text-xs font-bold tracking-wider uppercase text-emerald-700">
+            Dedicated Workflows
           </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mt-1">
-            The Problem with Traditional Document Verification
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-950 mt-1 tracking-tight">
+            Select Your Role to Begin
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-2">
-            Traditional paper certificates and scanned PDFs rely on appearances rather than mathematical proof.
+          <p className="text-xs sm:text-sm text-slate-600 mt-1">
+            Experience both sides of Self-Sovereign Identity: institutional issuance or student self-custody.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-[#131F42]/40 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-rose-950/60 border border-rose-500/30 flex items-center justify-center text-rose-400">
-              <FileX className="w-5 h-5" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Organization Portal Card */}
+          <div className="bg-white border border-slate-200 hover:border-emerald-400 rounded-3xl p-7 shadow-sm hover:shadow-lg transition-all space-y-4 group">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <Building2 className="w-6 h-6" />
+              </div>
+              <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200">
+                For Universities
+              </span>
             </div>
-            <h3 className="text-base font-bold text-white">Trivial Forgery & PDF Alteration</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Scanned marksheets and PDFs can be effortlessly edited with free graphic software. Employers have no native mechanism to prove that grades or degrees weren't modified after issuance.
-            </p>
+
+            <div>
+              <h3 className="text-xl font-extrabold text-slate-900">
+                Organization Portal
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+                Connect university MetaMask wallet, verify institutional accreditation in <code className="font-mono text-emerald-800 font-semibold text-xs">IssuerRegistry.sol</code>, digitally sign academic degrees with ECDSA, and anchor status hashes on-chain.
+              </p>
+            </div>
+
+            <div className="pt-2">
+              <Link
+                to="/issuer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition group-hover:translate-x-1"
+              >
+                <span>Launch Organization Portal</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
 
-          <div className="bg-[#131F42]/40 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-amber-950/60 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <Server className="w-5 h-5" />
+          {/* Student Portal Card */}
+          <div className="bg-white border border-slate-200 hover:border-slate-400 rounded-3xl p-7 shadow-sm hover:shadow-lg transition-all space-y-4 group">
+            <div className="flex items-center justify-between">
+              <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-800 flex items-center justify-center group-hover:scale-105 transition-transform">
+                <GraduationCap className="w-6 h-6" />
+              </div>
+              <span className="text-[11px] font-bold px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                For Students & Alumni
+              </span>
             </div>
-            <h3 className="text-base font-bold text-white">Slow, Costly Institutional Backchannels</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Verifying a degree currently requires background check agencies to email registrar desks, wait weeks for physical verification letters, and pay manual administration fees.
-            </p>
-          </div>
 
-          <div className="bg-[#131F42]/40 border border-slate-800 rounded-2xl p-6 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-950/60 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-              <EyeOff className="w-5 h-5" />
+            <div>
+              <h3 className="text-xl font-extrabold text-slate-900">
+                Student Digital Wallet
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
+                Hold your verifiable academic credentials directly in your browser off-chain. Export standardized W3C VC JSON files, present credentials to employers, or test anti-tamper mechanisms.
+              </p>
             </div>
-            <h3 className="text-base font-bold text-white">Repeated PII Over-Sharing</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Every job application demands submitting complete marksheets containing full date of birth, mother's name, and identification numbers, causing severe privacy leaks across hundreds of company databases.
-            </p>
+
+            <div className="pt-2">
+              <Link
+                to="/wallet"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm transition group-hover:translate-x-1"
+              >
+                <span>Open Student Wallet</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* SECTION 2: How Verifiable Credentials Work */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 bg-[#0E172E]/60 border border-slate-800/80 rounded-3xl p-8 sm:p-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          <div className="space-y-4">
-            <span className="text-xs font-semibold tracking-wider uppercase text-cyan-400">
-              W3C VC Standard 2.0
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              How Verifiable Credentials Work
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              A Verifiable Credential (VC) is a machine-readable digital document containing identity or qualification claims combined with a cryptographic digital signature generated by the issuing authority.
-            </p>
-            <div className="space-y-2.5 text-xs text-slate-300 pt-2">
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                <span><strong className="text-white">Tamper-Evident:</strong> Changing even a single character in the credential invalidates the cryptographic proof.</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                <span><strong className="text-white">Cryptographically Attributable:</strong> The signature ties the credential directly to the university's decentralized identifier (DID).</span>
-              </div>
-              <div className="flex items-start gap-2.5">
-                <CheckCircle2 className="w-4 h-4 text-cyan-400 shrink-0 mt-0.5" />
-                <span><strong className="text-white">Instantly Verifiable:</strong> Third parties verify authenticity in milliseconds using open-source mathematics without calling the university.</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-[#070C18] border border-slate-800 rounded-2xl p-5 font-mono text-xs text-slate-300 shadow-xl overflow-hidden">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-2 mb-3 text-[11px] text-slate-400">
-              <span>W3C VC 2.0 Credential Structure</span>
-              <span className="text-cyan-400 font-bold">Canonical JSON</span>
-            </div>
-            <pre className="text-cyan-200 text-[11px] leading-relaxed overflow-x-auto">
-{`{
-  "@context": ["https://www.w3.org/ns/credentials/v2"],
-  "id": "urn:uuid:7b3a4e...",
-  "type": ["VerifiableCredential", "UniversityDegreeCredential"],
-  "issuer": { "id": "did:ethr:0x7099...79C8", "name": "IIT Bombay" },
-  "validFrom": "2026-06-15T00:00:00Z",
-  "credentialSubject": {
-    "name": "Aarav Sharma — DEMO",
-    "degree": "Bachelor of Technology",
-    "programme": "Computer Science & Engineering",
-    "enrollmentStatus": "Active"
-  },
-  "credentialStatus": { "id": "0x4b7c...", "type": "EthereumStatusList" },
-  "proof": {
-    "type": "EcdsaSecp256k1RecoverySignature2020",
-    "proofValue": "0x3f9a...81c2"
-  }
-}`}
-            </pre>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 3: The Trust Triangle Architecture */}
+      {/* =========================================================================
+          4 ARCHITECTURAL PILLARS (Clean Minimalist Cards)
+         ========================================================================= */}
       <section className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-xs font-semibold tracking-wider uppercase text-cyan-400">
-            SSI Core Architecture
+        <div className="text-center max-w-xl mx-auto mb-10">
+          <span className="text-xs font-bold tracking-wider uppercase text-emerald-700">
+            System Architecture
           </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mt-1">
-            The Trust Triangle: Issuer, Holder, and Verifier
+          <h2 className="text-2xl font-extrabold text-slate-950 mt-1 tracking-tight">
+            Built on Open Standards & Trustless Cryptography
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-2">
-            Decentralized identity decouples credential issuance from ongoing verification.
-          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-[#131F42]/50 border border-cyan-500/30 rounded-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono text-cyan-400 px-2 py-0.5 rounded bg-cyan-950 border border-cyan-800">
-                ACTOR 1
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm space-y-2.5">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <Layers className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-sm text-slate-900">Consortium Blockchain</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Universities maintain accredited identities and publish opaque 32-byte status hashes to EVM smart contracts.
+            </p>
+          </div>
+
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm space-y-2.5">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <KeyRound className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-sm text-slate-900">MetaMask Key Custody</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Institutional private keys stay in MetaMask. Degrees are signed with ECDSA Secp256k1 recovery signatures.
+            </p>
+          </div>
+
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm space-y-2.5">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <Lock className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-sm text-slate-900">Zero-PII On-Chain</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Grades, student names, and personal identifiers never touch the blockchain, adhering to data privacy standards.
+            </p>
+          </div>
+
+          <div className="bg-white border border-slate-200/90 rounded-2xl p-5 shadow-sm space-y-2.5">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <h3 className="font-bold text-sm text-slate-900">Instant Verification</h3>
+            <p className="text-xs text-slate-500 leading-relaxed">
+              Employers verify mathematical authenticity in milliseconds without waiting for manual registrar responses.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* =========================================================================
+          CLASSROOM EVALUATION WALKTHROUGH
+         ========================================================================= */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6">
+        <div className="bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+            <div>
+              <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
+                Evaluation Walkthrough
               </span>
-              <GraduationCap className="w-6 h-6 text-cyan-400" />
+              <h2 className="text-xl font-extrabold text-slate-900 mt-0.5">
+                How to Demonstrate This Project to Your Evaluator
+              </h2>
             </div>
-            <h3 className="text-lg font-bold text-white">University / Issuer</h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Signs academic claims using its private key and registers the credential status identifier onto the smart contract registry. Issues the credential directly to the student.
-            </p>
-            <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-800">
-              Role: <strong>Issues & manages lifecycle</strong>
-            </div>
+            <Link
+              to="/tamper-demo"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-bold transition self-start sm:self-auto"
+            >
+              <Flame className="w-4 h-4 text-amber-600" />
+              <span>Try Anti-Tamper Demo</span>
+            </Link>
           </div>
 
-          <div className="bg-[#131F42]/50 border border-emerald-500/30 rounded-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono text-emerald-400 px-2 py-0.5 rounded bg-emerald-950 border border-emerald-800">
-                ACTOR 2
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2">
+              <span className="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">
+                1
               </span>
-              <Users className="w-6 h-6 text-emerald-400" />
+              <h4 className="font-bold text-slate-900 text-sm">Issue with MetaMask</h4>
+              <p className="text-slate-600 leading-relaxed">
+                Log into the <strong>Organization Portal</strong>. Issue a student degree. Show MetaMask popping up for digital signature and on-chain registration!
+              </p>
             </div>
-            <h3 className="text-lg font-bold text-white">Student / Holder</h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Holds credentials in their private local wallet. The student retains full sovereignty over who sees the credential and presents it directly to scholarship portals or employers.
-            </p>
-            <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-800">
-              Role: <strong>Owns & presents with consent</strong>
-            </div>
-          </div>
 
-          <div className="bg-[#131F42]/50 border border-indigo-500/30 rounded-2xl p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono text-indigo-400 px-2 py-0.5 rounded bg-indigo-950 border border-indigo-800">
-                ACTOR 3
+            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2">
+              <span className="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">
+                2
               </span>
-              <Shield className="w-6 h-6 text-indigo-400" />
+              <h4 className="font-bold text-slate-900 text-sm">Hold in Student Wallet</h4>
+              <p className="text-slate-600 leading-relaxed">
+                Open the <strong>Student Portal</strong>. Show that the credential is held off-chain in private browser custody. Export JSON or present to employer.
+              </p>
             </div>
-            <h3 className="text-lg font-bold text-white">Scholarship / Verifier</h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              Independently verifies the cryptographic signature, checks that the issuer is trusted in the smart contract registry, and validates that the credential has not been revoked.
-            </p>
-            <div className="text-[11px] text-slate-400 pt-2 border-t border-slate-800">
-              Role: <strong>Verifies without university callback</strong>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* SECTION 4 & 5: Role of Signatures & Role of Blockchain */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-[#131F42]/40 border border-slate-800 rounded-2xl p-7 space-y-4">
-          <div className="w-10 h-10 rounded-xl bg-cyan-950/70 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
-            <KeyRound className="w-5 h-5" />
-          </div>
-          <h3 className="text-lg font-bold text-white">The Role of Cryptographic Signatures</h3>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            The cryptographic signature provides <strong>integrity and authenticity</strong>. Using RFC 8785 JSON Canonicalization and Secp256k1 recovery, the signature guarantees that the claims have not been altered and were genuinely signed by the university's private key.
-          </p>
-          <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
-            <div className="font-semibold text-slate-300">What Signatures Prove:</div>
-            <div>• The document was created by the holder of the private key.</div>
-            <div>• No fields or characters were altered since signing.</div>
-          </div>
-        </div>
-
-        <div className="bg-[#131F42]/40 border border-slate-800 rounded-2xl p-7 space-y-4">
-          <div className="w-10 h-10 rounded-xl bg-indigo-950/70 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
-            <Database className="w-5 h-5" />
-          </div>
-          <h3 className="text-lg font-bold text-white">The Role of Blockchain</h3>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            Blockchain is <strong>not</strong> the database where student documents are stored. Instead, the EVM blockchain acts as a decentralized trust and status registry: resolving institutional issuer authority and recording real-time revocation events.
-          </p>
-          <div className="p-3 bg-slate-900/60 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1">
-            <div className="font-semibold text-slate-300">What the Blockchain Provides:</div>
-            <div>• Tamper-proof IssuerRegistry of authorized universities.</div>
-            <div>• Real-time CredentialStatusRegistry for immediate revocation.</div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 6: Privacy & Off-Chain Storage */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="bg-gradient-to-r from-emerald-950/40 via-[#131F42] to-cyan-950/40 border border-emerald-500/30 rounded-3xl p-8 sm:p-10">
-          <div className="max-w-3xl space-y-4">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-400 text-xs font-semibold">
-              <EyeOff className="w-3.5 h-3.5" />
-              Privacy by Design Architecture
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              Privacy and Off-Chain Credential Storage
-            </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Public blockchains are immutable: once data is published, it can never be deleted or modified. Putting student names, grades, or personal identifiers on a public blockchain violates fundamental privacy laws (such as GDPR and India's DPDP Act 2023).
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 text-xs">
-              <div className="bg-[#0A1024]/80 p-4 rounded-xl border border-slate-800">
-                <span className="font-bold text-rose-400">NEVER ON-CHAIN:</span>
-                <p className="text-slate-400 mt-1">Student names, grades, Aadhaar, degree specifics, or personal identity documents.</p>
-              </div>
-              <div className="bg-[#0A1024]/80 p-4 rounded-xl border border-slate-800">
-                <span className="font-bold text-emerald-400">ON-CHAIN ONLY:</span>
-                <p className="text-slate-400 mt-1">Authorized institutional wallet addresses and opaque 32-byte status hashes for revocation checks.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* SECTION 7: Step-by-Step Interactive Demonstrations */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 space-y-8">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="text-xs font-semibold tracking-wider uppercase text-cyan-400">
-            Interactive Technical Walkthrough
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mt-1">
-            Complete Step-by-Step Demonstration
-          </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-2">
-            Experience each stage of the credential lifecycle with live cryptographic feedback.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Link
-            to="/issuer"
-            className="group bg-[#131F42]/50 hover:bg-[#131F42] border border-slate-800 hover:border-cyan-500/50 rounded-2xl p-5 space-y-3 transition"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono text-cyan-400">STEP 1 & 2</span>
-              <GraduationCap className="w-5 h-5 text-cyan-400 group-hover:scale-110 transition-transform" />
-            </div>
-            <h3 className="text-sm font-bold text-white">Issue Credential</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              University registers in IssuerRegistry and issues an authentic signed credential.
-            </p>
-            <div className="text-xs font-semibold text-cyan-400 flex items-center gap-1 pt-1">
-              Go to Issuer <ArrowRight className="w-3.5 h-3.5" />
-            </div>
-          </Link>
-
-          <Link
-            to="/wallet"
-            className="group bg-[#131F42]/50 hover:bg-[#131F42] border border-slate-800 hover:border-emerald-500/50 rounded-2xl p-5 space-y-3 transition"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono text-emerald-400">STEP 3 & 4</span>
-              <FileCheck className="w-5 h-5 text-emerald-400 group-hover:scale-110 transition-transform" />
-            </div>
-            <h3 className="text-sm font-bold text-white">Student Custody</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Inspect off-chain storage in the student wallet and export or present credentials.
-            </p>
-            <div className="text-xs font-semibold text-emerald-400 flex items-center gap-1 pt-1">
-              Open Wallet <ArrowRight className="w-3.5 h-3.5" />
-            </div>
-          </Link>
-
-          <Link
-            to="/tamper-demo"
-            className="group bg-[#131F42]/50 hover:bg-[#131F42] border border-slate-800 hover:border-rose-500/50 rounded-2xl p-5 space-y-3 transition"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono text-rose-400">STEP 5 & 6</span>
-              <Flame className="w-5 h-5 text-rose-400 group-hover:scale-110 transition-transform" />
-            </div>
-            <h3 className="text-sm font-bold text-white">Tamper Demo</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Alter a claim in real-time and prove that signature verification immediately fails!
-            </p>
-            <div className="text-xs font-semibold text-rose-400 flex items-center gap-1 pt-1">
-              Test Tampering <ArrowRight className="w-3.5 h-3.5" />
-            </div>
-          </Link>
-
-          <Link
-            to="/registry"
-            className="group bg-[#131F42]/50 hover:bg-[#131F42] border border-slate-800 hover:border-amber-500/50 rounded-2xl p-5 space-y-3 transition"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-mono text-amber-400">STEP 7 & 8</span>
-              <Database className="w-5 h-5 text-amber-400 group-hover:scale-110 transition-transform" />
-            </div>
-            <h3 className="text-sm font-bold text-white">Revocation Demo</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              Revoke on-chain and demonstrate that valid signatures still fail verification.
-            </p>
-            <div className="text-xs font-semibold text-amber-400 flex items-center gap-1 pt-1">
-              Test Revocation <ArrowRight className="w-3.5 h-3.5" />
-            </div>
-          </Link>
-        </div>
-      </section>
-
-      {/* SECTION 8: Limitations and Responsible Considerations */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="bg-[#131F42]/30 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-4">
-          <div className="flex items-center gap-2.5 text-amber-400">
-            <AlertTriangle className="w-5 h-5 shrink-0" />
-            <h3 className="text-base font-bold text-white">
-              Limitations and Responsible Deployment Considerations
-            </h3>
-          </div>
-          <p className="text-xs text-slate-300 leading-relaxed">
-            This application is an educational prototype designed to demonstrate cryptographic concepts in a university laboratory. Real-world institutional deployment requires solving additional sociotechnical challenges:
-          </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs text-slate-400 pt-2">
-            <div className="space-y-1">
-              <strong className="text-slate-200">1. Private Key Governance:</strong>
-              <p>Universities must manage hardware security modules (HSM) to safeguard institutional signing keys from compromise.</p>
-            </div>
-            <div className="space-y-1">
-              <strong className="text-slate-200">2. Lost Wallet Recovery:</strong>
-              <p>Unlike centralized portals with "forgot password", decentralized SSI requires social recovery or guardian models.</p>
-            </div>
-            <div className="space-y-1">
-              <strong className="text-slate-200">3. Distinction from DigiLocker:</strong>
-              <p>DigiLocker is a centralized government-hosted repository. TrustID India demonstrates sovereign user custody where credentials exist locally.</p>
+            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-2">
+              <span className="w-6 h-6 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">
+                3
+              </span>
+              <h4 className="font-bold text-slate-900 text-sm">Verify & Anti-Tamper</h4>
+              <p className="text-slate-600 leading-relaxed">
+                Run the <strong>7-Stage Verifier</strong>. Show green verification. Then tamper with 1 letter in the degree and show instant mathematical failure!
+              </p>
             </div>
           </div>
         </div>

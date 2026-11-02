@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback } fr
 import { ethers } from 'ethers';
 import { UserRole, WalletState } from '../types';
 
-interface DemoAccountProfile {
+export interface DemoAccountProfile {
   address: string;
   name: string;
   role: UserRole;
@@ -13,21 +13,21 @@ interface DemoAccountProfile {
 export const DEMO_PROFILES: Record<string, DemoAccountProfile> = {
   issuer1: {
     address: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
-    name: 'Indian Institute of Technology Bombay — DEMO',
+    name: 'Indian Institute of Technology Bombay',
     role: 'ISSUER',
     privateKey: '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d',
     institution: 'IIT Bombay',
   },
   issuer2: {
     address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-    name: 'NIT Karnataka — DEMO',
+    name: 'NIT Karnataka',
     role: 'ISSUER',
-    privateKey: '0x5de4111afa1a4b94908f83103eb2f958084297f005d5c641d3e2392471010c78',
+    privateKey: '0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a',
     institution: 'NIT Karnataka',
   },
   governor: {
     address: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-    name: 'National Academic Governance Authority — DEMO',
+    name: 'National Academic Governance Authority',
     role: 'GOVERNOR',
     privateKey: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
   },
@@ -38,12 +38,15 @@ export const DEMO_PROFILES: Record<string, DemoAccountProfile> = {
   },
   verifier: {
     address: '0x90F79bf6EB2c4f870365E785982E1f101E93b906',
-    name: 'National Merit Scholarship Portal (Verifier)',
+    name: 'National Merit Scholarship Portal',
     role: 'VERIFIER',
   },
 };
 
 interface WalletContextType extends WalletState {
+  signer: ethers.Signer | null;
+  provider: ethers.BrowserProvider | null;
+  isMetaMaskConnected: boolean;
   connectMetaMask: () => Promise<void>;
   disconnectWallet: () => void;
   switchRole: (role: UserRole) => void;
@@ -60,7 +63,7 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined);
 export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [address, setAddress] = useState<string | null>(DEMO_PROFILES.issuer1.address);
   const [chainId, setChainId] = useState<number | null>(31337);
-  const [networkName, setNetworkName] = useState<string | null>('Hardhat Local (Simulated)');
+  const [networkName, setNetworkName] = useState<string | null>('Consortium Chain 31337');
   const [balance, setBalance] = useState<string | null>('10000.0 ETH');
   const [isConnected, setIsConnected] = useState<boolean>(true);
   const [isSimulated, setIsSimulated] = useState<boolean>(true);
@@ -68,29 +71,76 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [activeProfileKey, setActiveProfileKey] = useState<string>('issuer1');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const [signer, setSigner] = useState<ethers.Signer | null>(null);
+  const [provider, setProvider] = useState<ethers.BrowserProvider | null>(null);
+
   const isMetaMaskAvailable = typeof window !== 'undefined' && Boolean((window as any).ethereum);
   const isHardhatNetwork = chainId === 31337;
+  const isMetaMaskConnected = !isSimulated && isConnected && !!signer;
 
-  // Listen to MetaMask account / network changes if available
+  // Auto-detect already connected MetaMask accounts on page load
   useEffect(() => {
-    if (!isMetaMaskAvailable || isSimulated) return;
+    if (!isMetaMaskAvailable) return;
+    if (localStorage.getItem('trustid_wallet_disconnected') === 'true') return;
+
+    const ethereum = (window as any).ethereum;
+    ethereum
+      .request({ method: 'eth_accounts' })
+      .then(async (accounts: string[]) => {
+        if (accounts && accounts.length > 0) {
+          try {
+            const bp = new ethers.BrowserProvider(ethereum);
+            const s = await bp.getSigner();
+            const signerAddress = await s.getAddress();
+            const bal = await bp.getBalance(signerAddress);
+            const currentChainHex = await ethereum.request({ method: 'eth_chainId' });
+            const currentChain = parseInt(currentChainHex, 16);
+
+            setSigner(s);
+            setProvider(bp);
+            setAddress(signerAddress);
+            setChainId(currentChain);
+            setNetworkName(currentChain === 31337 ? 'Consortium Chain 31337' : `Chain ID ${currentChain}`);
+            setBalance(`${parseFloat(ethers.formatEther(bal)).toFixed(3)} ETH`);
+            setIsConnected(true);
+            setIsSimulated(false);
+          } catch (e) {
+            console.warn('Auto-connect on load:', e);
+          }
+        }
+      })
+      .catch((err: any) => console.warn('Could not read eth_accounts:', err));
+  }, [isMetaMaskAvailable]);
+
+  // Listen to MetaMask account / network changes if active
+  useEffect(() => {
+    if (!isMetaMaskAvailable) return;
 
     const ethereum = (window as any).ethereum;
 
-    const handleAccountsChanged = (accounts: string[]) => {
+    const handleAccountsChanged = async (accounts: string[]) => {
       if (accounts.length === 0) {
         setIsConnected(false);
         setAddress(null);
+        setSigner(null);
       } else {
-        setAddress(ethers.getAddress(accounts[0]));
+        const bp = new ethers.BrowserProvider(ethereum);
+        const s = await bp.getSigner();
+        const addr = ethers.getAddress(accounts[0]);
+        const bal = await bp.getBalance(addr);
+        setAddress(addr);
+        setSigner(s);
+        setProvider(bp);
+        setBalance(`${parseFloat(ethers.formatEther(bal)).toFixed(3)} ETH`);
         setIsConnected(true);
+        setIsSimulated(false);
       }
     };
 
     const handleChainChanged = (chainHex: string) => {
       const newChainId = parseInt(chainHex, 16);
       setChainId(newChainId);
-      setNetworkName(newChainId === 31337 ? 'Hardhat Local' : `Chain ID ${newChainId}`);
+      setNetworkName(newChainId === 31337 ? 'Consortium Chain 31337' : `Chain ID ${newChainId}`);
     };
 
     ethereum.on('accountsChanged', handleAccountsChanged);
@@ -100,12 +150,13 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       ethereum.removeListener('accountsChanged', handleAccountsChanged);
       ethereum.removeListener('chainChanged', handleChainChanged);
     };
-  }, [isMetaMaskAvailable, isSimulated]);
+  }, [isMetaMaskAvailable]);
 
   const connectMetaMask = useCallback(async () => {
     setErrorMessage(null);
+    localStorage.removeItem('trustid_wallet_disconnected');
     if (!isMetaMaskAvailable) {
-      setErrorMessage('MetaMask is not installed in this browser. Running in simulated local mode.');
+      setErrorMessage('MetaMask is not installed in this browser. Please install the MetaMask extension to use live signing and transactions.');
       return;
     }
 
@@ -115,15 +166,17 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const currentChainHex = await ethereum.request({ method: 'eth_chainId' });
       const currentChain = parseInt(currentChainHex, 16);
 
-      const provider = new ethers.BrowserProvider(ethereum);
-      const signer = await provider.getSigner();
-      const signerAddress = await signer.getAddress();
-      const bal = await provider.getBalance(signerAddress);
+      const browserProvider = new ethers.BrowserProvider(ethereum);
+      const metaMaskSigner = await browserProvider.getSigner();
+      const signerAddress = await metaMaskSigner.getAddress();
+      const bal = await browserProvider.getBalance(signerAddress);
 
+      setSigner(metaMaskSigner);
+      setProvider(browserProvider);
       setAddress(signerAddress);
       setChainId(currentChain);
-      setNetworkName(currentChain === 31337 ? 'Hardhat Local' : `Chain ${currentChain}`);
-      setBalance(`${parseFloat(ethers.formatEther(bal)).toFixed(4)} ETH`);
+      setNetworkName(currentChain === 31337 ? 'Consortium Chain 31337' : `Chain ID ${currentChain}`);
+      setBalance(`${parseFloat(ethers.formatEther(bal)).toFixed(3)} ETH`);
       setIsConnected(true);
       setIsSimulated(false);
     } catch (err: any) {
@@ -140,35 +193,49 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!isMetaMaskAvailable) return;
     try {
       const ethereum = (window as any).ethereum;
-      await ethereum.request({
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: '0x7A69', // 31337 in hex
-            chainName: 'Hardhat Localhost (TrustID India)',
-            nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-            rpcUrls: ['http://127.0.0.1:8545'],
-          },
-        ],
-      });
+      try {
+        await ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: '0x7A69' }], // 31337 in hex
+        });
+      } catch (switchError: any) {
+        if (switchError.code === 4902 || switchError.data?.originalError?.code === 4902) {
+          await ethereum.request({
+            method: 'wallet_addEthereumChain',
+            params: [
+              {
+                chainId: '0x7A69',
+                chainName: 'Hardhat Consortium (TrustID India)',
+                nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
+                rpcUrls: ['http://127.0.0.1:8545'],
+              },
+            ],
+          });
+        } else {
+          throw switchError;
+        }
+      }
     } catch (err: any) {
-      console.warn('Network addition prompt returned:', err);
+      console.warn('Network addition/switch prompt returned:', err);
     }
   }, [isMetaMaskAvailable]);
 
   const disconnectWallet = useCallback(() => {
+    localStorage.setItem('trustid_wallet_disconnected', 'true');
     setIsConnected(false);
     setAddress(null);
+    setSigner(null);
+    setProvider(null);
     setIsSimulated(false);
   }, []);
 
   const switchRole = useCallback((role: UserRole) => {
     setSelectedRole(role);
-    // Find matching profile for convenience
     const entry = Object.entries(DEMO_PROFILES).find(([_, p]) => p.role === role);
     if (entry) {
       setActiveProfileKey(entry[0]);
       setAddress(entry[1].address);
+      setSigner(null);
       setIsSimulated(true);
       setIsConnected(true);
     }
@@ -180,6 +247,7 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setActiveProfileKey(profileKey);
       setAddress(profile.address);
       setSelectedRole(profile.role);
+      setSigner(null);
       setIsSimulated(true);
       setIsConnected(true);
     }
@@ -198,6 +266,9 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         isMetaMaskAvailable,
         isSimulated,
         selectedRole,
+        signer,
+        provider,
+        isMetaMaskConnected,
         connectMetaMask,
         disconnectWallet,
         switchRole,

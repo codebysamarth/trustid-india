@@ -58,9 +58,14 @@ export function saveCredentialToWallet(
   }
 }
 
-export function removeCredentialFromWallet(credentialId: string): void {
+export function removeCredentialFromWallet(credentialId: string, index?: number): void {
   try {
-    const list = getStoredCredentials().filter((c) => c.credential.id !== credentialId);
+    let list = getStoredCredentials();
+    if (typeof index === 'number' && index >= 0 && index < list.length) {
+      list.splice(index, 1);
+    } else {
+      list = list.filter((c) => c.credential?.id !== credentialId);
+    }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   } catch (err) {
     console.error('Failed to remove credential:', err);

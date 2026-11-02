@@ -18,6 +18,7 @@ import {
   registerCredentialOnChain,
   revokeCredentialOnChain,
   getContractDeployment,
+  getCredentialStatusRegistryContract,
 } from '../services/blockchain';
 import { verifyVerifiableCredential } from '../services/verificationEngine';
 import { credentialStore, IssuedCredentialMeta } from '../services/credentialStore';
@@ -154,6 +155,24 @@ router.post('/issue', async (req: Request, res: Response) => {
 });
 
 /**
+ * Synchronizes client-side MetaMask revocation with backend storage.
+ */
+router.post('/sync-revoked', (req: Request, res: Response) => {
+  try {
+    const { credentialId, statusId, reason } = req.body;
+    if (credentialId) {
+      credentialStore.updateStatus(credentialId, true, reason);
+    }
+    if (statusId) {
+      credentialStore.updateStatus(statusId, true, reason);
+    }
+    return res.json({ success: true, message: 'Status updated to revoked in storage' });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
  * Verifies a credential payload against the 7-stage verification engine.
  */
 router.post('/verify', async (req: Request, res: Response) => {
@@ -178,6 +197,24 @@ router.post('/verify', async (req: Request, res: Response) => {
       success: false,
       error: `Verification processing failure: ${err.message || String(err)}`,
     });
+  }
+});
+
+/**
+ * Synchronizes client-side MetaMask revocation with backend storage.
+ */
+router.post('/sync-revoked', (req: Request, res: Response) => {
+  try {
+    const { credentialId, statusId, reason } = req.body;
+    if (credentialId) {
+      credentialStore.updateStatus(credentialId, true, reason);
+    }
+    if (statusId) {
+      credentialStore.updateStatus(statusId, true, reason);
+    }
+    return res.json({ success: true, message: 'Status updated to revoked in storage' });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err.message });
   }
 });
 
@@ -232,10 +269,72 @@ router.post('/revoke', async (req: Request, res: Response) => {
 });
 
 /**
+ * Synchronizes client-side MetaMask revocation with backend storage.
+ */
+router.post('/sync-revoked', (req: Request, res: Response) => {
+  try {
+    const { credentialId, statusId, reason } = req.body;
+    if (credentialId) {
+      credentialStore.updateStatus(credentialId, true, reason);
+    }
+    if (statusId) {
+      credentialStore.updateStatus(statusId, true, reason);
+    }
+    return res.json({ success: true, message: 'Status updated to revoked in storage' });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
+ * Records a credential signed and registered directly via client-side MetaMask.
+ */
+router.post('/record', (req: Request, res: Response) => {
+  try {
+    const { credential, statusId, txHash } = req.body;
+    if (!credential || !credential.id) {
+      return res.status(400).json({ success: false, error: 'Valid credential payload required' });
+    }
+    const computedStatusId =
+      statusId || credential.credentialStatus?.id || computeCredentialStatusId(credential.id);
+    const meta: IssuedCredentialMeta = {
+      credential,
+      statusId: computedStatusId,
+      txHash,
+      isRevoked: false,
+      issuedAt: credential.validFrom || new Date().toISOString(),
+    };
+    credentialStore.add(meta);
+    return res.json({ success: true, meta });
+  } catch (err: any) {
+    return res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+/**
  * Returns all issued credentials tracked in the demo store.
  */
-router.get('/issued', (_req: Request, res: Response) => {
+router.get('/issued', async (_req: Request, res: Response) => {
   const credentials = credentialStore.getAll();
+  try {
+    const statusContract = getCredentialStatusRegistryContract();
+    if (statusContract) {
+      for (const item of credentials) {
+        const statusId = item.statusId || (item.credential.credentialStatus && item.credential.credentialStatus.id);
+        if (statusId) {
+          const onChainStatus = await statusContract.getCredentialStatus(statusId);
+          if (onChainStatus.isRevoked && !item.isRevoked) {
+            item.isRevoked = true;
+            item.revocationReason = onChainStatus.reason || 'Revoked on-chain';
+            credentialStore.updateStatus(item.credential.id, true, item.revocationReason);
+          }
+        }
+      }
+    }
+  } catch (err) {
+    console.warn('Could not query on-chain statuses in /issued:', err);
+  }
+
   return res.json({
     success: true,
     total: credentials.length,

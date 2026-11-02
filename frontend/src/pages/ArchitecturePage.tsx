@@ -1,6 +1,6 @@
 import React from 'react';
 import {
-  Shield,
+  ShieldCheck,
   Layers,
   GraduationCap,
   Users,
@@ -14,192 +14,228 @@ import {
   Cpu,
   BookOpen,
   Info,
+  Building2,
+  Binary,
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export const ArchitecturePage: React.FC = () => {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-      {/* Header */}
-      <div className="border-b border-slate-800 pb-6 space-y-2">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+      {/* Page Header */}
+      <div className="bg-white p-6 sm:p-8 rounded-2xl border border-emerald-100 shadow-sm space-y-2">
         <div className="flex items-center gap-2">
-          <div className="p-2 bg-cyan-950/80 border border-cyan-500/30 text-cyan-400 rounded-lg">
+          <span className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg">
             <BookOpen className="w-5 h-5" />
-          </div>
-          <span className="text-xs uppercase tracking-wider font-semibold text-cyan-400">
-            Educational Foundations & System Design
+          </span>
+          <span className="text-xs uppercase tracking-wider font-bold text-emerald-700">
+            System Design & Cryptographic Foundations
           </span>
         </div>
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white">
-          TrustID India: Architecture & SSI Deep Dive
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          TrustID India: Architecture & Self-Sovereign Identity (SSI) Deep Dive
         </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed">
-          A comprehensive breakdown of Self-Sovereign Identity (SSI), W3C Verifiable Credentials (VCs), decentralized trust registries, and cryptographic integrity.
+        <p className="text-xs sm:text-sm text-slate-600 max-w-3xl leading-relaxed">
+          A technical breakdown of Self-Sovereign Identity (SSI), W3C Verifiable Credentials (VCs), decentralized trust registries, and zero-PII blockchain architecture.
         </p>
       </div>
 
-      {/* 1. Visual Trust Triangle Diagram */}
-      <section className="bg-[#131F42]/60 border border-slate-800 rounded-3xl p-8 sm:p-10 space-y-8">
+      {/* 1. The SSI Trust Triangle Diagram */}
+      <section className="bg-white border border-emerald-100 rounded-2xl p-6 sm:p-8 shadow-sm space-y-8">
         <div className="text-center max-w-2xl mx-auto">
-          <span className="text-xs font-semibold tracking-wider uppercase text-cyan-400">
-            The SSI Trust Triangle
+          <span className="text-xs font-bold tracking-wider uppercase text-emerald-700">
+            Decentralized Credential Architecture
           </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-white mt-1">
-            Three Actors, Decentralized Verification
+          <h2 className="text-2xl font-extrabold text-slate-900 mt-1">
+            The SSI Trust Triangle: Three Actors, Trustless Verification
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400 mt-2">
-            The fundamental breakthrough of SSI: Verifiers validate credentials directly without pinging the issuing university.
+          <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed">
+            In traditional identity, verifiers must query the university's database. In SSI, verifiers audit the credential mathematically using open cryptography and the on-chain trust registry.
           </p>
         </div>
 
-        {/* Responsive Diagram Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
-          {/* Issuer */}
-          <div className="bg-[#0A1024] border border-cyan-500/40 rounded-2xl p-6 space-y-3 relative">
+        {/* 3 Actor Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* 1. Issuer */}
+          <div className="bg-emerald-50/40 border border-emerald-200/80 rounded-2xl p-6 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-cyan-400 uppercase tracking-wider">
-                1. ISSUER (University)
+              <span className="text-xs font-bold text-emerald-800 uppercase tracking-wider">
+                1. Issuer (University)
               </span>
-              <GraduationCap className="w-6 h-6 text-cyan-400" />
+              <div className="p-2 bg-emerald-100 text-emerald-800 rounded-xl">
+                <Building2 className="w-5 h-5" />
+              </div>
             </div>
-            <h3 className="text-base font-bold text-white">Accredited Institution</h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              • Signs academic credential with its private key (<code className="font-mono text-cyan-300 text-[10px]">Secp256k1</code>)<br />
-              • Emits opaque status hash to <code className="font-mono text-cyan-300 text-[10px]">CredentialStatusRegistry</code><br />
-              • Delivers signed credential directly to student wallet off-chain.
-            </p>
+            <h3 className="text-base font-bold text-slate-900">Accredited Institution</h3>
+            <ul className="text-xs text-slate-600 space-y-2 leading-relaxed">
+              <li className="flex items-start gap-1.5">
+                <span className="text-emerald-600 font-bold">•</span>
+                <span>Signs degree with institutional private key (<code className="font-mono text-emerald-800 font-semibold text-[11px]">ECDSA Secp256k1</code> via MetaMask).</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-emerald-600 font-bold">•</span>
+                <span>Registers opaque 32-byte status hash on <code className="font-mono text-emerald-800 font-semibold text-[11px]">CredentialStatusRegistry.sol</code>.</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-emerald-600 font-bold">•</span>
+                <span>Delivers signed W3C VC 2.0 directly to student wallet off-chain.</span>
+              </li>
+            </ul>
           </div>
 
-          {/* Holder */}
-          <div className="bg-[#0A1024] border border-emerald-500/40 rounded-2xl p-6 space-y-3 relative">
+          {/* 2. Holder */}
+          <div className="bg-teal-50/40 border border-teal-200/80 rounded-2xl p-6 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase tracking-wider">
-                2. HOLDER (Student)
+              <span className="text-xs font-bold text-teal-800 uppercase tracking-wider">
+                2. Holder (Student)
               </span>
-              <Users className="w-6 h-6 text-emerald-400" />
+              <div className="p-2 bg-teal-100 text-teal-800 rounded-xl">
+                <GraduationCap className="w-5 h-5" />
+              </div>
             </div>
-            <h3 className="text-base font-bold text-white">Self-Sovereign Custody</h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              • Stores credentials in private digital wallet off-chain<br />
-              • Discloses credentials strictly upon explicit user consent<br />
-              • Retains ownership even if the issuing university ceases operations.
-            </p>
+            <h3 className="text-base font-bold text-slate-900">Self-Sovereign Custody</h3>
+            <ul className="text-xs text-slate-600 space-y-2 leading-relaxed">
+              <li className="flex items-start gap-1.5">
+                <span className="text-teal-600 font-bold">•</span>
+                <span>Holds credential in private digital wallet off-chain in local browser storage.</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-teal-600 font-bold">•</span>
+                <span>Presents credentials directly to employers without asking university permission.</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-teal-600 font-bold">•</span>
+                <span>Retains permanent ownership even if the issuing university shuts down.</span>
+              </li>
+            </ul>
           </div>
 
-          {/* Verifier */}
-          <div className="bg-[#0A1024] border border-indigo-500/40 rounded-2xl p-6 space-y-3 relative">
+          {/* 3. Verifier */}
+          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold text-indigo-400 uppercase tracking-wider">
-                3. VERIFIER (Scholarship)
+              <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+                3. Verifier (Employer)
               </span>
-              <Shield className="w-6 h-6 text-indigo-400" />
+              <div className="p-2 bg-slate-200 text-slate-800 rounded-xl">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
             </div>
-            <h3 className="text-base font-bold text-white">Relying Party Portal</h3>
-            <p className="text-xs text-slate-300 leading-relaxed">
-              • Recovers issuer address from credential cryptographic signature<br />
-              • Checks institutional authority in on-chain <code className="font-mono text-cyan-300 text-[10px]">IssuerRegistry</code><br />
-              • Verifies real-time revocation status in <code className="font-mono text-cyan-300 text-[10px]">CredentialStatusRegistry</code>.
-            </p>
+            <h3 className="text-base font-bold text-slate-900">Relying Party Portal</h3>
+            <ul className="text-xs text-slate-600 space-y-2 leading-relaxed">
+              <li className="flex items-start gap-1.5">
+                <span className="text-slate-600 font-bold">•</span>
+                <span>Recovers university public key address directly from the digital signature.</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-slate-600 font-bold">•</span>
+                <span>Checks on-chain accreditation in <code className="font-mono text-slate-800 font-semibold text-[11px]">IssuerRegistry.sol</code>.</span>
+              </li>
+              <li className="flex items-start gap-1.5">
+                <span className="text-slate-600 font-bold">•</span>
+                <span>Verifies live revocation state in <code className="font-mono text-slate-800 font-semibold text-[11px]">CredentialStatusRegistry.sol</code> in O(1) time.</span>
+              </li>
+            </ul>
           </div>
         </div>
 
         {/* Blockchain Trust Anchor Box */}
-        <div className="bg-[#070C18] border border-slate-800 rounded-2xl p-5 text-center space-y-2">
-          <div className="flex items-center justify-center gap-2 text-cyan-400">
+        <div className="bg-slate-50 border border-emerald-200 rounded-2xl p-5 text-center space-y-1.5">
+          <div className="flex items-center justify-center gap-2 text-emerald-700">
             <Cpu className="w-5 h-5" />
-            <h4 className="font-bold text-sm text-white">
-              Underlying Trust Registry Layer: Local EVM Blockchain (Hardhat)
+            <h4 className="font-bold text-sm text-slate-900">
+              Underlying Trust Registry: Consortium EVM Smart Contracts (Hardhat Node)
             </h4>
           </div>
-          <p className="text-xs text-slate-400 max-w-2xl mx-auto leading-relaxed">
-            Acts as the public bulletin board: <strong className="text-slate-300">IssuerRegistry.sol</strong> maps DIDs to authorized universities, and <strong className="text-slate-300">CredentialStatusRegistry.sol</strong> tracks active/revoked lifecycle states in constant time O(1).
+          <p className="text-xs text-slate-600 max-w-2xl mx-auto leading-relaxed">
+            Acts as the public trust anchor: <strong className="text-slate-900 font-semibold">IssuerRegistry.sol</strong> accredits authorized university DIDs, and <strong className="text-slate-900 font-semibold">CredentialStatusRegistry.sol</strong> maintains active/revoked lifecycle states without storing any personal data.
           </p>
         </div>
       </section>
 
-      {/* 2. Key Technology Comparisons */}
-      <section className="space-y-6">
-        <div className="border-b border-slate-800 pb-3">
-          <h2 className="text-xl sm:text-2xl font-bold text-white">
-            Conceptual Evolution: Documents vs SSI
+      {/* 2. Conceptual Evolution: Documents vs SSI */}
+      <section className="bg-white border border-emerald-100 rounded-2xl p-6 sm:p-8 shadow-sm space-y-5">
+        <div className="border-b border-slate-100 pb-3">
+          <h2 className="text-xl font-bold text-slate-900">
+            Conceptual Evolution: Paper vs SSI
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Understanding the critical differences across 5 distinct paradigms.
+          <p className="text-xs text-slate-500 mt-0.5">
+            Understanding why modern verifiable credentials supersede traditional scanned PDFs.
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-xs">
-          <div className="bg-[#131F42]/40 border border-slate-800 rounded-xl p-4 space-y-2">
-            <span className="text-[10px] font-mono text-rose-400 uppercase font-bold">1. Digital Document</span>
-            <p className="font-bold text-white">Scanned PDF / Image</p>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
-              Vulnerable to visual tampering in Photoshop. No cryptographic proof of origin. Requires phone calls to registrar to verify.
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-1.5">
+            <span className="text-[10px] font-mono text-rose-700 uppercase font-bold">1. Paper Document</span>
+            <p className="font-bold text-slate-900">Physical Certificate</p>
+            <p className="text-slate-500 text-[11px] leading-relaxed">
+              Easily forged with high-quality printing. Slow and expensive postal verification.
             </p>
           </div>
 
-          <div className="bg-[#131F42]/40 border border-slate-800 rounded-xl p-4 space-y-2">
-            <span className="text-[10px] font-mono text-amber-400 uppercase font-bold">2. Digitally Signed PDF</span>
-            <p className="font-bold text-white">PKI / Adobe Sign</p>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
-              Proves PDF bytes were untouched. But monolithic, human-oriented, and hard to parse machine-readable claims selectively.
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-1.5">
+            <span className="text-[10px] font-mono text-amber-700 uppercase font-bold">2. Scanned PDF</span>
+            <p className="font-bold text-slate-900">Unsigned PDF / JPEG</p>
+            <p className="text-slate-500 text-[11px] leading-relaxed">
+              Vulnerable to Photoshop editing in seconds. Zero cryptographic proof of authorship.
             </p>
           </div>
 
-          <div className="bg-[#131F42]/40 border border-cyan-500/30 rounded-xl p-4 space-y-2">
-            <span className="text-[10px] font-mono text-cyan-400 uppercase font-bold">3. Verifiable Credential</span>
-            <p className="font-bold text-white">W3C VC Data Model 2.0</p>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
-              Structured JSON holding atomic claims and cryptographic proof. Instantly machine-verifiable across heterogenous software.
+          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-1.5">
+            <span className="text-[10px] font-mono text-teal-700 uppercase font-bold">3. Signed PDF</span>
+            <p className="font-bold text-slate-900">Adobe PKI Signature</p>
+            <p className="text-slate-500 text-[11px] leading-relaxed">
+              Proves PDF bytes were untouched. But monolithic, hard to parse selectively, and proprietary.
             </p>
           </div>
 
-          <div className="bg-[#131F42]/40 border border-emerald-500/30 rounded-xl p-4 space-y-2">
-            <span className="text-[10px] font-mono text-emerald-400 uppercase font-bold">4. Self-Sovereign Identity</span>
-            <p className="font-bold text-white">Holder-Centric Custody</p>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
-              Users own their identifiers (DIDs) and credentials directly off-chain. No centralized server can revoke or lock user identity.
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 space-y-1.5">
+            <span className="text-[10px] font-mono text-emerald-800 uppercase font-bold">4. Verifiable Credential</span>
+            <p className="font-bold text-slate-900">W3C VC 2.0 Standard</p>
+            <p className="text-slate-600 text-[11px] leading-relaxed">
+              Machine-readable structured claims with ECDSA cryptographic proof. Instantly verifiable anywhere.
             </p>
           </div>
 
-          <div className="bg-[#131F42]/40 border border-indigo-500/30 rounded-xl p-4 space-y-2">
-            <span className="text-[10px] font-mono text-indigo-400 uppercase font-bold">5. Blockchain Registry</span>
-            <p className="font-bold text-white">Decentralized Trust Anchor</p>
-            <p className="text-slate-400 text-[11px] leading-relaxed">
-              Resolves public keys and tracks revocation without storing personal data. Ensures verifiers can trust signatures trustlessly.
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 space-y-1.5">
+            <span className="text-[10px] font-mono text-emerald-800 uppercase font-bold">5. Blockchain Registry</span>
+            <p className="font-bold text-slate-900">Decentralized Status</p>
+            <p className="text-slate-600 text-[11px] leading-relaxed">
+              Trustlessly verifies issuer accreditation and real-time revocation with zero PII stored on-chain.
             </p>
           </div>
         </div>
       </section>
 
       {/* 3. Indian Identity Landscape Comparison */}
-      <section className="bg-[#0E172E]/70 border border-slate-800 rounded-3xl p-8 space-y-5">
-        <h2 className="text-xl sm:text-2xl font-bold text-white">
-          TrustID India vs DigiLocker, Digi Yatra, and Aadhaar
+      <section className="bg-white border border-emerald-100 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4">
+        <h2 className="text-xl font-bold text-slate-900">
+          TrustID India vs DigiLocker & UIDAI Aadhaar
         </h2>
-        <p className="text-xs text-slate-300 leading-relaxed max-w-4xl">
-          It is essential not to confuse national digital identity platforms with Self-Sovereign Identity. While they share the goal of digitizing verification, their underlying architecture differs fundamentally:
+        <p className="text-xs text-slate-600 leading-relaxed max-w-4xl">
+          It is essential not to confuse national statutory identity systems with Self-Sovereign Identity. While they share the goal of digital verification, their architectures differ fundamentally:
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2 text-xs">
-          <div className="bg-[#0A1024] p-5 rounded-2xl border border-slate-800 space-y-2">
-            <span className="font-bold text-white text-sm">UIDAI Aadhaar</span>
-            <span className="text-[10px] text-cyan-400 font-mono block">Centralized Identity Base</span>
-            <p className="text-slate-400 leading-relaxed">
-              Aadhaar is a centralized statutory identification system managed by UIDAI. Authentication requires pinging central biometric servers (CIDR). It is not an SSI platform.
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2 text-xs">
+          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2">
+            <span className="font-bold text-slate-900 text-sm">UIDAI Aadhaar</span>
+            <span className="text-[10px] text-slate-500 font-mono font-semibold block">Centralized Identity Base</span>
+            <p className="text-slate-600 leading-relaxed">
+              A statutory national identity system managed by UIDAI. Authentication requires pinging central government biometric servers (CIDR). It is not an SSI platform.
             </p>
           </div>
 
-          <div className="bg-[#0A1024] p-5 rounded-2xl border border-slate-800 space-y-2">
-            <span className="font-bold text-white text-sm">DigiLocker</span>
-            <span className="text-[10px] text-emerald-400 font-mono block">Federated Document Repository</span>
-            <p className="text-slate-400 leading-relaxed">
-              DigiLocker is a cloud-based repository where government and academic issuers push URIs. Users log in through central government servers. Credentials exist on government servers, not in decentralized holder custody.
+          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-2">
+            <span className="font-bold text-slate-900 text-sm">DigiLocker</span>
+            <span className="text-[10px] text-slate-500 font-mono font-semibold block">Federated Document Repository</span>
+            <p className="text-slate-600 leading-relaxed">
+              A cloud-based document repository where universities push URI links. Users log in through central government servers. Credentials exist on government servers, not in decentralized holder custody.
             </p>
           </div>
 
-          <div className="bg-[#0A1024] p-5 rounded-2xl border border-cyan-500/40 space-y-2">
-            <span className="font-bold text-white text-sm">TrustID India (Prototype)</span>
-            <span className="text-[10px] text-cyan-300 font-mono block">Decentralized Self-Sovereign Model</span>
-            <p className="text-slate-400 leading-relaxed">
+          <div className="bg-emerald-50 p-5 rounded-2xl border border-emerald-200 space-y-2">
+            <span className="font-bold text-slate-900 text-sm">TrustID India (Prototype)</span>
+            <span className="text-[10px] text-emerald-800 font-mono font-bold block">Decentralized SSI Architecture</span>
+            <p className="text-slate-700 leading-relaxed">
               Demonstrates W3C Verifiable Credentials where data is stored strictly on the student's device. Blockchain is used exclusively for decentralized issuer accreditation and revocation status. Zero central server dependency.
             </p>
           </div>
@@ -207,46 +243,46 @@ export const ArchitecturePage: React.FC = () => {
       </section>
 
       {/* 4. Limitations of Our Prototype */}
-      <section className="bg-[#131F42]/30 border border-slate-800 rounded-3xl p-8 sm:p-10 space-y-6">
-        <div className="flex items-center gap-2.5 text-amber-400">
-          <AlertTriangle className="w-6 h-6 shrink-0" />
-          <h2 className="text-xl sm:text-2xl font-bold text-white">
-            Limitations of Our Prototype
+      <section className="bg-white border border-amber-200 rounded-2xl p-6 sm:p-8 shadow-sm space-y-4">
+        <div className="flex items-center gap-2 text-amber-800">
+          <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0" />
+          <h2 className="text-xl font-bold text-slate-900">
+            Responsible Prototype Considerations & Limitations
           </h2>
         </div>
-        <p className="text-xs text-slate-300 leading-relaxed max-w-4xl">
-          A responsible engineering evaluation must clearly delineate the boundary between an educational laboratory prototype and an enterprise production identity infrastructure:
+        <p className="text-xs text-slate-600 leading-relaxed max-w-4xl">
+          An honest university engineering assessment must distinguish between an academic laboratory prototype and an enterprise production identity infrastructure:
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 text-xs text-slate-400">
-          <div className="p-4 bg-slate-900/60 rounded-xl border border-slate-800 space-y-1">
-            <strong className="text-slate-200">1. Issuer Governance & Key Management:</strong>
-            <p>Our prototype uses local EVM accounts. In production, universities require Hardware Security Modules (HSMs, FIPS 140-2 Level 3) with multi-signature authorization to prevent private key theft.</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs text-slate-600">
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+            <strong className="text-slate-900">1. Key Custody in Production:</strong>
+            <p>Our prototype uses MetaMask for demonstration. In production, universities use Hardware Security Modules (HSMs, FIPS 140-2 Level 3) with multi-signature governance.</p>
           </div>
 
-          <div className="p-4 bg-slate-900/60 rounded-xl border border-slate-800 space-y-1">
-            <strong className="text-slate-200">2. Lost Wallet Recovery:</strong>
-            <p>If a student clears browser storage or loses their hardware device, decentralized credentials are lost unless a distributed social recovery or threshold cryptography guardian scheme is implemented.</p>
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+            <strong className="text-slate-900">2. Lost Wallet Recovery:</strong>
+            <p>If a student clears browser storage, credentials must be re-exported. Production SSI uses distributed social recovery or guardian key schemes.</p>
           </div>
 
-          <div className="p-4 bg-slate-900/60 rounded-xl border border-slate-800 space-y-1">
-            <strong className="text-slate-200">3. Privacy & Linkability:</strong>
-            <p>While personal claims remain off-chain, re-using static public identifiers across multiple verifiers can permit correlation. Advanced production systems use Zero-Knowledge Proofs (ZKPs) or pairwise unique DIDs.</p>
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+            <strong className="text-slate-900">3. Privacy & Linkability:</strong>
+            <p>Personal data is off-chain. Production systems add Zero-Knowledge Proofs (ZKPs) or pairwise DIDs to prevent correlation across multiple verifiers.</p>
           </div>
 
-          <div className="p-4 bg-slate-900/60 rounded-xl border border-slate-800 space-y-1">
-            <strong className="text-slate-200">4. Revocation Scalability:</strong>
-            <p>Our prototype records individual status IDs on-chain. For millions of university graduates, bit-vector accumulators (e.g., W3C StatusList2021) or Merkle trees are necessary to keep gas costs negligible.</p>
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+            <strong className="text-slate-900">4. Revocation Scalability:</strong>
+            <p>We record individual 32-byte hashes. For millions of graduates, bit-vector accumulators (W3C StatusList2021) keep gas costs negligible.</p>
           </div>
 
-          <div className="p-4 bg-slate-900/60 rounded-xl border border-slate-800 space-y-1">
-            <strong className="text-slate-200">5. Accessibility & Digital Divide:</strong>
-            <p>Self-sovereign wallets require modern smartphones and digital literacy. Production deployments must provide assisted-custody or physical smartcard fallbacks for disadvantaged populations.</p>
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+            <strong className="text-slate-900">5. Digital Accessibility:</strong>
+            <p>SSI wallets require modern web browsers. Production nationwide deployments should support smartcards or assisted kiosks for underserved students.</p>
           </div>
 
-          <div className="p-4 bg-slate-900/60 rounded-xl border border-slate-800 space-y-1">
-            <strong className="text-slate-200">6. Prototype vs Production Boundary:</strong>
-            <p>This implementation runs on a local Hardhat EVM (Chain ID 31337) with sample university profiles. It proves cryptographic and architectural feasibility without replacing real statutory registries.</p>
+          <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+            <strong className="text-slate-900">6. Academic Scope:</strong>
+            <p>Runs on local EVM (Chain ID 31337) with sample university profiles. Proves mathematical feasibility without claiming to replace official statutory bodies.</p>
           </div>
         </div>
       </section>
