@@ -92,9 +92,23 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             const bp = new ethers.BrowserProvider(ethereum);
             const s = await bp.getSigner();
             const signerAddress = await s.getAddress();
-            const bal = await bp.getBalance(signerAddress);
+            let bal = await bp.getBalance(signerAddress);
             const currentChainHex = await ethereum.request({ method: 'eth_chainId' });
             const currentChain = parseInt(currentChainHex, 16);
+
+            // Auto-fund connected account if balance is zero on local consortium node
+            if (currentChain === 31337 && bal < ethers.parseEther('1.0')) {
+              try {
+                await fetch('/api/demo/faucet', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ address: signerAddress }),
+                });
+                bal = await bp.getBalance(signerAddress);
+              } catch (faucetErr) {
+                console.warn('Auto-faucet error:', faucetErr);
+              }
+            }
 
             setSigner(s);
             setProvider(bp);
@@ -169,7 +183,21 @@ export const WalletProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       const browserProvider = new ethers.BrowserProvider(ethereum);
       const metaMaskSigner = await browserProvider.getSigner();
       const signerAddress = await metaMaskSigner.getAddress();
-      const bal = await browserProvider.getBalance(signerAddress);
+      let bal = await browserProvider.getBalance(signerAddress);
+
+      // Auto-fund connected account if balance is zero on local consortium node
+      if (currentChain === 31337 && bal < ethers.parseEther('1.0')) {
+        try {
+          await fetch('/api/demo/faucet', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ address: signerAddress }),
+          });
+          bal = await browserProvider.getBalance(signerAddress);
+        } catch (faucetErr) {
+          console.warn('Auto-faucet on connect error:', faucetErr);
+        }
+      }
 
       setSigner(metaMaskSigner);
       setProvider(browserProvider);
